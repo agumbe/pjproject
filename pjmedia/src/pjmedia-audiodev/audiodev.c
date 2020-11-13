@@ -19,6 +19,7 @@
  */
 #include <pjmedia-audiodev/audiodev_imp.h>
 #include <pj/assert.h>
+#include <pj/log.h>
 
 #define THIS_FILE   "audiodev.c"
 
