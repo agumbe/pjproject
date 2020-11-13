@@ -120,6 +120,7 @@ typedef struct pjmedia_aud_subsys
     unsigned	     	dev_cnt;	/* Total number of devices.	    */
     pj_uint32_t	     	dev_list[PJMEDIA_AUD_MAX_DEVS];/* Array of dev IDs. */
 
+    pjmedia_aud_dev_observer  dev_observer;
 } pjmedia_aud_subsys;
 
 
