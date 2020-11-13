@@ -108,6 +108,14 @@ typedef struct pjmedia_aud_driver
     int			     dev_idx;	  /* Default device.		    */
 } pjmedia_aud_driver;
 
+typedef enum pjmedia_aud_dev_event {
+    PJMEDIA_AUD_DEV_DEFAULT_INPUT_CHANGED,
+    PJMEDIA_AUD_DEV_DEFAULT_OUTPUT_CHANGED,
+    PJMEDIA_AUD_DEV_LIST_WILL_REFRESH,
+    PJMEDIA_AUD_DEV_LIST_DID_REFRESH
+} pjmedia_aud_dev_event;
+
+
 typedef void (*pjmedia_aud_dev_observer_callback)(pjmedia_aud_dev_event event);
 
 /**

@@ -100,13 +100,6 @@ pjmedia_aud_register_factory(pjmedia_aud_dev_factory_create_func_ptr adf);
 PJ_DECL(pj_status_t)
 pjmedia_aud_unregister_factory(pjmedia_aud_dev_factory_create_func_ptr adf);
 
-typedef enum pjmedia_aud_dev_event {
-    PJMEDIA_AUD_DEV_DEFAULT_INPUT_CHANGED,
-    PJMEDIA_AUD_DEV_DEFAULT_OUTPUT_CHANGED,
-    PJMEDIA_AUD_DEV_LIST_WILL_REFRESH,
-    PJMEDIA_AUD_DEV_LIST_DID_REFRESH
-} pjmedia_aud_dev_event;
-
 
 
 /**
