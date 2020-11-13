@@ -30,6 +30,7 @@
 #include <pjmedia/frame.h>
 #include <pjmedia/types.h>
 #include <pj/pool.h>
+#include <pj/os.h>
 
 
 PJ_BEGIN_DECL
