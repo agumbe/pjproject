@@ -108,8 +108,6 @@ typedef enum pjmedia_aud_dev_event {
 } pjmedia_aud_dev_event;
 
 
-typedef void (*pjmedia_aud_dev_observer_callback)(pjmedia_aud_dev_event event);
-
 
 /**
  * @}

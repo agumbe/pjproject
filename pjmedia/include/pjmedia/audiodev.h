@@ -108,6 +108,8 @@ typedef struct pjmedia_aud_driver
     int			     dev_idx;	  /* Default device.		    */
 } pjmedia_aud_driver;
 
+typedef void (*pjmedia_aud_dev_observer_callback)(pjmedia_aud_dev_event event);
+
 /**
  * This structure specifies the parameters to set an audio device observer
  */
