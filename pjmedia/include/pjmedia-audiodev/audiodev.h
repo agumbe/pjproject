@@ -110,17 +110,6 @@ typedef enum pjmedia_aud_dev_event {
 
 typedef void (*pjmedia_aud_dev_observer_callback)(pjmedia_aud_dev_event event);
 
-/**
- * This structure specifies the parameters to set an audio device observer
- */
-typedef struct pjmedia_aud_dev_observer {
-    pjmedia_aud_dev_observer_callback cb;
-    pj_pool_t *pool;
-    pj_mutex_t *lock;
-    pj_thread_t *thread;
-    pj_thread_desc thread_desc;
-} pjmedia_aud_dev_observer;
-
 
 /**
  * @}
