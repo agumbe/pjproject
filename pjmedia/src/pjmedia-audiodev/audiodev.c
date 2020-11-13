@@ -238,6 +238,7 @@ PJ_DEF(pj_status_t) pjmedia_aud_subsys_shutdown(void)
 PJ_DEF(pj_status_t) pjmedia_aud_dev_set_observer_cb(pjmedia_aud_dev_observer_callback cb)
 {
     pj_status_t status;
+    pjmedia_aud_subsys *aud_subsys = pjmedia_get_aud_subsys();
 
     status = pj_mutex_lock(aud_subsys.dev_observer.lock);
     if (status != PJ_SUCCESS) {
