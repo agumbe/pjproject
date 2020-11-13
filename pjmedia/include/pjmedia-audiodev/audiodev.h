@@ -26,6 +26,7 @@
  */
 #include <pj/pool.h>
 #include <pjmedia/audiodev.h>
+#include <pj/os.h>
 
 
 PJ_BEGIN_DECL
