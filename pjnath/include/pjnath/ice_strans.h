@@ -200,6 +200,17 @@ typedef struct pj_ice_strans_cb
 			       pj_ice_strans_op op,
 			       pj_status_t status);
 
+    /**
+     * Callback to report ICE state changes.
+     *
+     * @param ice_st	    The ICE stream transport.
+     * @param prev	    Previous state.
+     * @param curr	    Current state.
+     */
+    void    (*on_ice_state)(pj_ice_strans *ice_st,
+			    pj_ice_strans_state prev,
+			    pj_ice_strans_state curr);
+
 } pj_ice_strans_cb;
 
 
