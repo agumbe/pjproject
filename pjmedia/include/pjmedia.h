@@ -73,7 +73,7 @@
 #include <pjmedia/vid_conf.h>
 #include <pjmedia/vid_port.h>
 #include <pjmedia/vid_stream.h>
-//#include <pjmedia/vid_tee.h>
+#include <pjmedia/vid_tee.h>
 #include <pjmedia/wav_playlist.h>
 #include <pjmedia/wav_port.h>
 #include <pjmedia/wave.h>
