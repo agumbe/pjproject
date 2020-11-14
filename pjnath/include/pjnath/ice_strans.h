@@ -928,6 +928,27 @@ PJ_DECL(const pj_ice_sess_check*)
 pj_ice_strans_get_valid_pair(const pj_ice_strans *ice_st,
 			     unsigned comp_id);
 
+
+/**
+ * Retrieve the ICE session associated with this transport
+ *
+ * @param ice_st	The ICE stream transport.
+ *
+ * @return		The ICE session associated with this transport
+ */
+PJ_DECL(pj_ice_sess*)
+pj_ice_strans_get_session(const pj_ice_strans *ice_st);
+
+/**
+ * Retrieve the ICE start time
+ *
+ * @param ice_st	The ICE stream transport.
+ *
+ * @return		The ICE start time
+ */
+PJ_DECL(pj_time_val)
+pj_ice_strans_get_start_time(const pj_ice_strans *ice_st);
+
 /**
  * Stop and destroy the ICE session inside this media transport. Application
  * needs to call this function once the media session is over (the call has

@@ -1547,6 +1547,25 @@ pj_ice_strans_get_valid_pair(const pj_ice_strans *ice_st,
 }
 
 /*
+ * Get ICE session.
+ */
+PJ_DEF(pj_ice_sess*)
+pj_ice_strans_get_session(const pj_ice_strans *ice_st)
+{
+    return ice_st->ice;
+}
+
+/*
+ * Get ICE start time.
+ */
+PJ_DEF(pj_time_val)
+pj_ice_strans_get_start_time(const pj_ice_strans *ice_st)
+{
+
+    return ice_st->start_time;
+}
+
+/*
  * Stop ICE!
  */
 PJ_DEF(pj_status_t) pj_ice_strans_stop_ice(pj_ice_strans *ice_st)
