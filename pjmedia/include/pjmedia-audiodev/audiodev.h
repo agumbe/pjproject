@@ -100,6 +100,19 @@ pjmedia_aud_register_factory(pjmedia_aud_dev_factory_create_func_ptr adf);
 PJ_DECL(pj_status_t)
 pjmedia_aud_unregister_factory(pjmedia_aud_dev_factory_create_func_ptr adf);
 
+/**
+ * Set an audio device observer callback.
+ *
+ * @param cb		The callback that needs to be registred, or NULL in
+ *                      in case it needs to be unregistered. Only one callback
+ *                      can be registered.
+ *
+ * @return		PJ_SUCCESS on successful operation or the appropriate
+ *			error code.
+ */
+PJ_DECL(pj_status_t) pjmedia_aud_dev_set_observer_cb(pjmedia_aud_dev_observer_callback cb);
+
+
 
 
 /**

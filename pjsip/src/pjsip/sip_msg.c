@@ -416,7 +416,18 @@ PJ_DEF(void*) pjsip_msg_find_remove_hdr( pjsip_msg *msg,
     return hdr;
 }
 
-PJ_DEF(pj_ssize_t) pjsip_msg_print( const pjsip_msg *msg, 
+PJ_DEF(void*) pjsip_msg_find_remove_hdr_by_name( pjsip_msg *msg,
+                                                 pj_str_t *name,
+                                                 void *start)
+{
+    pjsip_hdr *hdr = (pjsip_hdr*) pjsip_msg_find_hdr_by_name(msg, name, start);
+    if (hdr) {
+	pj_list_erase(hdr);
+    }
+    return hdr;
+}
+
+PJ_DEF(pj_ssize_t) pjsip_msg_print( const pjsip_msg *msg,
 				    char *buf, pj_size_t size)
 {
     char *p=buf, *end=buf+size;
@@ -2162,6 +2173,24 @@ PJ_DEF(pjsip_warning_hdr*) pjsip_warning_hdr_create_from_status(pj_pool_t *pool,
     
     text = pj_strerror(status, errbuf, sizeof(errbuf));
     return pjsip_warning_hdr_create(pool, 399, host, &text);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/*
+ * Message body manipulations.
+ */
+PJ_DEF(int) pjsip_print_body(pjsip_msg_body *msg_body, char **buf, int *len)
+{
+    static char s_buf[PJSIP_MAX_PKT_LEN];
+    int res;
+
+    res = (*msg_body->print_body)(msg_body, s_buf, PJSIP_MAX_PKT_LEN);
+    if (res < 0) {
+        return -1;
+    }
+    *buf = s_buf;
+    *len = res;
+    return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

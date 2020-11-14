@@ -540,6 +540,13 @@ PJ_DEF(void) pjsip_evsub_uas_set_timeout(pjsip_evsub *sub, pj_uint32_t seconds)
 }
 
 
+PJ_DEF(void) pjsip_evsub_set_timer( pjsip_evsub *sub, int timer_id,
+		                    pj_int32_t seconds)
+{
+    set_timer(sub, timer_id, seconds);
+}
+
+
 /*
  * Destructor.
  */

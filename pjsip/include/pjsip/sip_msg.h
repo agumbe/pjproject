@@ -697,6 +697,21 @@ struct pjsip_msg_body
 };
 
 /**
+ * General purpose function to print a SIP message body.
+ * Uses the appropriate internal functions to print the string representation
+ * of a SIP message body. It sets the output buffer to a statically allocated
+ * buffer, so the caller is responsible to copy it.
+ *
+ * @param msg_body	The message body.
+ * @param buf		Pointer to get the result buffer (statically allocated).
+ * @param size		The size of the buffer.
+ *
+ * @return		The length copied to the buffer, or -1.
+ */
+PJ_DECL(int) pjsip_print_body( pjsip_msg_body *msg_body,
+				    char **buf, int *len);
+
+/**
  * General purpose function to textual data in a SIP body. Attach this function
  * in a SIP message body only if the data in pjsip_msg_body is a textual 
  * message ready to be embedded in a SIP message. If the data in the message
@@ -916,7 +931,21 @@ PJ_DECL(void*)  pjsip_msg_find_hdr_by_names(const pjsip_msg *msg,
 PJ_DECL(void*)  pjsip_msg_find_remove_hdr( pjsip_msg *msg, 
 					   pjsip_hdr_e hdr, void *start);
 
-/** 
+/**
+ * Find and remove a header in the message.
+ *
+ * @param msg	    The message.
+ * @param name	    The header name to find.
+ * @param start	    The first header field where the search should begin,
+ *		    or NULL to search from the first header in the message.
+ *
+ * @return	    The header field, or NULL if not found.
+ */
+PJ_DECL(void*)  pjsip_msg_find_remove_hdr_by_name( pjsip_msg *msg,
+                                                   pj_str_t *name,
+                                                   void *start);
+
+/**
  * Add a header to the message, putting it last in the header list.
  *
  * @param msg	    The message.
