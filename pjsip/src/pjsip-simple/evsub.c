@@ -496,8 +496,13 @@ static void update_expires( pjsip_evsub *sub, pj_uint32_t interval )
     sub->refresh_time.sec += interval;
 }
 
+PJ_DEF(void) pjsip_evsub_update_expires( pjsip_evsub *sub, pj_uint32_t interval )
+{
+    update_expires(sub, interval);
+}
 
-/* 
+
+/*
  * Schedule timer.
  */
 static void set_timer( pjsip_evsub *sub, int timer_id,
