@@ -934,7 +934,7 @@ PJ_DEF(pj_status_t) pj_ice_strans_create( const char *name,
 		   pj_pool_calloc(pool, comp_cnt, sizeof(pj_ice_strans_comp*));
 
     /* Move state to candidate gathering */
-    ice_st->state = PJ_ICE_STRANS_STATE_INIT;
+    set_ice_state(ice_st, PJ_ICE_STRANS_STATE_INIT);
 
     /* Acquire initialization mutex to prevent callback to be
      * called before we finish initialization.
@@ -1129,7 +1129,7 @@ static void sess_init_update(pj_ice_strans *ice_st)
      * candidate for a component.
      */
     ice_st->cb_called = PJ_TRUE;
-    ice_st->state = PJ_ICE_STRANS_STATE_READY;
+    set_ice_state(ice_st, PJ_ICE_STRANS_STATE_READY);
     if (ice_st->cb.on_ice_complete)
 	(*ice_st->cb.on_ice_complete)(ice_st, PJ_ICE_STRANS_OP_INIT,
 				      status);
@@ -1296,7 +1296,7 @@ PJ_DEF(pj_status_t) pj_ice_strans_init_ice(pj_ice_strans *ice_st,
     }
 
     /* ICE session is ready for negotiation */
-    ice_st->state = PJ_ICE_STRANS_STATE_SESS_READY;
+    set_ice_state(ice_st, PJ_ICE_STRANS_STATE_SESS_READY);
 
     return PJ_SUCCESS;
 
@@ -1526,7 +1526,7 @@ PJ_DEF(pj_status_t) pj_ice_strans_start_ice( pj_ice_strans *ice_st,
 	return status;
     }
 
-    ice_st->state = PJ_ICE_STRANS_STATE_NEGO;
+    set_ice_state(ice_st, PJ_ICE_STRANS_STATE_NEGO);
     return status;
 }
 
@@ -1583,7 +1583,7 @@ PJ_DEF(pj_status_t) pj_ice_strans_stop_ice(pj_ice_strans *ice_st)
 	ice_st->ice = NULL;
     }
 
-    ice_st->state = PJ_ICE_STRANS_STATE_INIT;
+    set_ice_state(ice_st, PJ_ICE_STRANS_STATE_INIT);
 
     pj_grp_lock_release(ice_st->grp_lock);
 
@@ -1889,8 +1889,12 @@ static void on_valid_pair(pj_ice_sess *ice)
 	    }
 	}
 
-	ice_st->state = (status == PJ_SUCCESS) ? PJ_ICE_STRANS_STATE_RUNNING :
+        /*
+        ice_st->state = (status == PJ_SUCCESS) ? PJ_ICE_STRANS_STATE_RUNNING :
 	                                         PJ_ICE_STRANS_STATE_FAILED;
+        */
+	set_ice_state(ice_st, (status==PJ_SUCCESS) ? PJ_ICE_STRANS_STATE_RUNNING :
+					             PJ_ICE_STRANS_STATE_FAILED);
 
 	pj_log_push_indent();
 	(*cb.on_valid_pair)(ice_st);
@@ -1983,9 +1987,12 @@ static void on_ice_complete(pj_ice_sess *ice, pj_status_t status)
 		}
 	    }
 	}
-
+        /*
 	ice_st->state = (status==PJ_SUCCESS) ? PJ_ICE_STRANS_STATE_RUNNING :
 					       PJ_ICE_STRANS_STATE_FAILED;
+        */
+	set_ice_state(ice_st, (status==PJ_SUCCESS) ? PJ_ICE_STRANS_STATE_RUNNING :
+					             PJ_ICE_STRANS_STATE_FAILED);
 
 	pj_log_push_indent();
 	(*cb.on_ice_complete)(ice_st, PJ_ICE_STRANS_OP_NEGOTIATION, status);

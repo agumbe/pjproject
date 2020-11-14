@@ -416,6 +416,10 @@ static void set_no_ice(struct transport_ice *tp_ice, const char *reason,
 		  "Stopping ICE, reason=%s", reason));
     }
 
+    /* Notify application about ICE stop */
+    if (tp_ice->cb.on_ice_stop)
+        (*tp_ice->cb.on_ice_stop)(&tp_ice->base, (char *)reason, err);
+
     if (tp_ice->ice_st) {
 	pj_ice_strans_stop_ice(tp_ice->ice_st);
     }

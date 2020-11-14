@@ -74,6 +74,29 @@ typedef struct pjmedia_ice_cb
 			        pj_status_t status,
 				void *user_data);
 
+
+    /**
+     * This callback will be called when ICE state changes.
+     *
+     * @param tp	PJMEDIA ICE transport.
+     * @param prev	Previous state.
+     * @param curr	Current state.
+     */
+    void    (*on_ice_state)(pjmedia_transport *tp,
+			    pj_ice_strans_state prev,
+			    pj_ice_strans_state curr);
+
+    /**
+     * This callback will be called when ICE is stopped.
+     *
+     * @param tp	PJMEDIA ICE transport.
+     * @param reason	Reason for stopping ICE.
+     * @param err	Error code
+     */
+    void    (*on_ice_stop)(pjmedia_transport *tp,
+			   char *reason,
+			   pj_status_t err);
+
 } pjmedia_ice_cb;
 
 
