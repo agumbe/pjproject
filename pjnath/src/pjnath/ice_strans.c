@@ -241,6 +241,19 @@ typedef struct sock_user_data
 } sock_user_data;
 
 
+/* Set ICE state*/
+static void set_ice_state(pj_ice_strans *ice_st, pj_ice_strans_state state)
+{
+    pj_ice_strans_state prev = ice_st->state;
+
+    if (prev != state) {
+        ice_st->state = state;
+        if (ice_st->cb.on_ice_state)
+            (*ice_st->cb.on_ice_state)(ice_st, prev, state);
+    }
+}
+
+
 /* Validate configuration */
 static pj_status_t pj_ice_strans_cfg_check_valid(const pj_ice_strans_cfg *cfg)
 {
