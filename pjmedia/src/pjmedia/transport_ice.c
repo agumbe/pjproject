@@ -314,6 +314,19 @@ PJ_DEF(pj_status_t) pjmedia_ice_create3(pjmedia_endpt *endpt,
     return PJ_SUCCESS;
 }
 
+
+/*
+ * Get the ICE stream transport associated with this media transport.
+ */
+PJ_DEF(pj_ice_strans*) pjmedia_ice_get_strans(pjmedia_transport *tp)
+{
+    struct transport_ice *tp_ice;
+
+    tp_ice = (struct transport_ice*) tp;
+    return tp_ice->ice_st;
+}
+
+
 PJ_DEF(pj_grp_lock_t *) pjmedia_ice_get_grp_lock(pjmedia_transport *tp)
 {
     PJ_ASSERT_RETURN(tp, NULL);

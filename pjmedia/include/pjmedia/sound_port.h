@@ -386,6 +386,14 @@ PJ_DECL(pjmedia_port*) pjmedia_snd_port_get_port(pjmedia_snd_port *snd_port);
  */
 PJ_DECL(pj_status_t) pjmedia_snd_port_disconnect(pjmedia_snd_port *snd_port);
 
+/**
+ * Reset the EC state in the sound port.
+ *
+ * @param snd_port	    The sound device port.
+ *
+ * @return		    PJ_SUCCESS on success.
+ */
+PJ_DECL(pj_status_t) pjmedia_snd_port_reset_ec_state(pjmedia_snd_port *snd_port);
 
 /**
  * @}

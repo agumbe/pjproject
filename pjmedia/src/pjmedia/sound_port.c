@@ -796,4 +796,15 @@ PJ_DEF(pj_status_t) pjmedia_snd_port_disconnect(pjmedia_snd_port *snd_port)
     return PJ_SUCCESS;
 }
 
+/* Reset EC state */
+PJ_DEF(pj_status_t) pjmedia_snd_port_reset_ec_state( pjmedia_snd_port *snd_port )
+{
+    PJ_ASSERT_RETURN(snd_port, PJ_EINVAL);
+    if (snd_port->ec_state) {
+	pjmedia_echo_reset(snd_port->ec_state);
+	PJ_LOG(4,(THIS_FILE, "EC reset"));
+    }
+    return PJ_SUCCESS;
+}
+
 

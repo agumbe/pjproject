@@ -258,6 +258,17 @@ PJ_DECL(pj_grp_lock_t *) pjmedia_ice_get_grp_lock(pjmedia_transport *tp);
 
 
 /**
+ * Return the ICE stream transport associated with this PJMEDIA transport
+ *
+ * @param tp		Media transport instance.
+ *
+ * @return		Pointer to the pj_ice_strans instance associated with this
+ *                      media transport.
+ */
+PJ_DECL(pj_ice_strans*) pjmedia_ice_get_strans(pjmedia_transport *tp);
+
+
+/**
  * Add application to receive ICE notifications from the specified ICE media
  * transport.
  *
