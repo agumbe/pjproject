@@ -148,6 +148,9 @@ endif
 endif
 endif
 
+# ZRTP
+APP_THIRD_PARTY_LIBS += -lzsrtp-$(TARGET_NAME) -lsqlite3 -lstdc++
+APP_THIRD_PARTY_LIB_FILES += $(PJ_DIR)/third_party/lib/libzsrtp-$(LIB_SUFFIX)
 
 # Additional flags
 @ac_build_mak_vars@
