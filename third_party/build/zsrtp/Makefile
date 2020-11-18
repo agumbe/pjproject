@@ -5,7 +5,14 @@ export LIBDIR := ../../lib
 
 RULES_MAK := $(PJDIR)/build/rules.mak
 
-export ZSRTP_LIB := ../../lib/libzsrtp-$(TARGET_NAME)$(LIBEXT)
+export ZSRTP_LIB := libzsrtp-$(TARGET_NAME)$(LIBEXT)
+
+ifeq ($(PJ_SHARED_LIBRARIES),)
+else
+export ZSRTP_SONAME := libzsrtp.$(SHLIB_SUFFIX)
+export ZSRTP_SHLIB := $(ZSRTP_SONAME).$(PJ_VERSION_MAJOR)
+endif
+
 
 ###############################################################################
 # Gather all flags.
@@ -112,8 +119,10 @@ distclean: realclean
 
 .PHONY: dep depend libzsrtp clean realclean distclean
 
-libzsrtp:
-	$(MAKE) -f $(RULES_MAK) APP=ZSRTP app=libzsrtp $(ZSRTP_LIB)
+libzsrtp: $(ZSRTP_LIB)
+$(ZSRTP_SONAME): $(ZSRTP_LIB)
+$(ZSRTP_LIB) $(ZSRTP_SONAME):
+	$(MAKE) -f $(RULES_MAK) APP=ZSRTP app=libzsrtp $(subst /,$(HOST_PSEP),$(LIBDIR)/$@)
 
 clean print_lib:
 	$(MAKE) -f $(RULES_MAK) APP=ZSRTP app=libzsrtp $@
