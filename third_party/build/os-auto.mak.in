@@ -117,3 +117,6 @@ else # Generic fixed point
 endif
 endif
 endif
+
+DIRS += zsrtp
+
