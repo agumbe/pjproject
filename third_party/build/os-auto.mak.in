@@ -73,6 +73,14 @@ DIRS += yuv
 endif
 endif
 
+ifneq (@ac_no_zsrtp@,1)
+ifeq (@ac_external_zsrtp@,1)
+# External yuv
+else
+DIRS += zsrtp
+endif
+endif
+
 ifneq (@ac_no_webrtc@,1)
 ifeq (@ac_external_webrtc@,1)
 # External webrtc
@@ -118,5 +126,4 @@ endif
 endif
 endif
 
-DIRS += zsrtp
 
