@@ -75,9 +75,17 @@ endif
 
 ifneq (@ac_no_zsrtp@,1)
 ifeq (@ac_external_zsrtp@,1)
-# External yuv
+# External zsrtp
 else
 DIRS += zsrtp
+endif
+endif
+
+ifneq (@ac_no_opus@,1)
+ifeq (@ac_external_opus@,1)
+# External opus
+else
+DIRS += opus
 endif
 endif
 
