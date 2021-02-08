@@ -67,7 +67,7 @@ void hmac_sha256(uint8_t* key, uint32_t key_length,
         data_chunks ++;
         data_chunck_length ++;
     }
-    HMAC_Final(ctx, mac, mac_length));
+    HMAC_Final(ctx, mac, mac_length);
     HMAC_CTX_free(ctx);
 #else
     unsigned int tmp;
