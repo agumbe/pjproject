@@ -55,6 +55,19 @@ void hmac_sha384(uint8_t* key, uint32_t key_length,
                  uint32_t data_chunck_length[],
                  uint8_t* mac, uint32_t* mac_length )
 {
+#if OPENSSL_VERSION_NUMBER >= 0x10100003L
+    HMAC_CTX *ctx;
+
+    ctx = HMAC_CTX_new();
+    HMAC_Init_ex(ctx, key, key_length, EVP_sha384(), NULL);
+    while (*data_chunks) {
+        HMAC_Update(ctx, *data_chunks, *data_chunck_length);
+        data_chunks ++;
+        data_chunck_length ++;
+    }
+    HMAC_Final(ctx, mac, mac_length);
+    HMAC_CTX_free(ctx);
+#else
     unsigned int tmp;
     HMAC_CTX ctx;
     HMAC_CTX_init( &ctx );
@@ -67,6 +80,7 @@ void hmac_sha384(uint8_t* key, uint32_t key_length,
     HMAC_Final( &ctx, mac, &tmp);
     *mac_length = tmp;
     HMAC_CTX_cleanup( &ctx );
+#endif
 }
 
 #if defined(__APPLE__)
