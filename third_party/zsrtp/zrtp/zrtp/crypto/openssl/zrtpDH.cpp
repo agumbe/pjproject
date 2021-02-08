@@ -226,6 +226,8 @@ ZrtpDH::ZrtpDH(const char* type) {
     switch (pkType) {
     case DH2K:
     case DH3K:
+#if OPENSSL_VERSION_NUMBER >= 0x10100003L
+#else
         ctx = static_cast<void*>(DH_new());
         tmpCtx = static_cast<DH*>(ctx);
         tmpCtx->g = BN_new();
@@ -241,6 +243,7 @@ ZrtpDH::ZrtpDH(const char* type) {
             RAND_bytes(random, 64);
             tmpCtx->priv_key = BN_bin2bn(random, 32, NULL);
         }
+#endif
         break;
 
     case EC25:
