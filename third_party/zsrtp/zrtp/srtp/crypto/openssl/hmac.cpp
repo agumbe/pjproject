@@ -56,7 +56,6 @@ void hmac_sha1( uint8_t* key, int32_t key_length,
                 uint32_t data_chunck_length[],
                 uint8_t* mac, int32_t* mac_length ) {
     HMAC_CTX *ctx;
-    unsigned int res_len;
 
     ctx = HMAC_CTX_new();
     HMAC_Init_ex(ctx, key, key_length, EVP_sha1(), NULL);
@@ -83,20 +82,33 @@ void hmac_sha1( uint8_t* key, int32_t key_length,
 
 void* createSha1HmacContext(uint8_t* key, int32_t key_length)
 {
+    HMAC_CTX *ctx;
+
+    ctx = HMAC_CTX_new();
+    HMAC_Init_ex(ctx, key, key_length, EVP_sha1(), NULL);
+    return ctx;
+    /*
     HMAC_CTX* ctx = (HMAC_CTX*)malloc(sizeof(HMAC_CTX));
 
     HMAC_CTX_init(ctx);
     HMAC_Init_ex(ctx, key, key_length, EVP_sha1(), NULL);
     return ctx;
+    */
 }
 
 void* initializeSha1HmacContext(void* ctx, uint8_t* key, int32_t keyLength)
 {
     HMAC_CTX *pctx = (HMAC_CTX*)ctx;
 
+    HMAC_Init_ex(pctx, key, keyLength, EVP_sha1(), NULL);
+    return pctx;
+    /*
+    HMAC_CTX *pctx = (HMAC_CTX*)ctx;
+
     HMAC_CTX_init(pctx);
     HMAC_Init_ex(pctx, key, keyLength, EVP_sha1(), NULL);
     return pctx;
+    */
 }
 
 void hmacSha1Ctx(void* ctx, const uint8_t* data, uint32_t data_length,
