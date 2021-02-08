@@ -61,7 +61,7 @@ void hmac_sha1( uint8_t* key, int32_t key_length,
     ctx = HMAC_CTX_new();
     HMAC_Init_ex(ctx, key, key_length, EVP_sha1(), NULL);
     while (*data_chunks) {
-        HMAC_Update(ctx, data, data_len);
+        HMAC_Update(ctx, *data_chunks, *data_chunck_length);
         data_chunks ++;
         data_chunck_length ++;
     }
