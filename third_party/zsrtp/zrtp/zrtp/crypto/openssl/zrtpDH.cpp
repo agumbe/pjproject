@@ -273,7 +273,8 @@ ZrtpDH::~ZrtpDH() {
 }
 
 int32_t ZrtpDH::computeSecretKey(uint8_t *pubKeyBytes, uint8_t *secret) {
-
+#if OPENSSL_VERSION_NUMBER >= 0x10100003L
+#else
     if (pkType == DH2K || pkType == DH3K) {
         DH* tmpCtx = static_cast<DH*>(ctx);
 
@@ -298,6 +299,7 @@ int32_t ZrtpDH::computeSecretKey(uint8_t *pubKeyBytes, uint8_t *secret) {
         EC_POINT_free(point);
         return ret;
     }
+#endif
     return -1;
 }
 
