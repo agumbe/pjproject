@@ -138,7 +138,7 @@ void hmacSha1Ctx(void* ctx, const uint8_t* data[], uint32_t data_length[],
 void freeSha1HmacContext(void* ctx)
 {
     if (ctx) {
-        HMAC_CTX_free(ctx);
+        HMAC_CTX_free((HMAC_CTX*)ctx);
     }
     /*
     if (ctx) {
