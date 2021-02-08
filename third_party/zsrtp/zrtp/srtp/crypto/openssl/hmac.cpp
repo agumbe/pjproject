@@ -138,9 +138,14 @@ void hmacSha1Ctx(void* ctx, const uint8_t* data[], uint32_t data_length[],
 void freeSha1HmacContext(void* ctx)
 {
     if (ctx) {
+        HMAC_CTX_free(ctx);
+    }
+    /*
+    if (ctx) {
         HMAC_CTX_cleanup((HMAC_CTX*)ctx);
         free(ctx);
     }
+    */
 }
 
 #if defined(__APPLE__)
