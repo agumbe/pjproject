@@ -328,6 +328,8 @@ int32_t ZrtpDH::getDhSize() const
 
 int32_t ZrtpDH::getPubKeySize() const
 {
+#if OPENSSL_VERSION_NUMBER >= 0x10100003L
+#else
     if (pkType == DH2K || pkType == DH3K)
         return BN_num_bytes(static_cast<DH*>(ctx)->pub_key);
 
@@ -335,12 +337,15 @@ int32_t ZrtpDH::getPubKeySize() const
         return EC_POINT_point2oct(EC_KEY_get0_group(static_cast<EC_KEY*>(ctx)),
                                   EC_KEY_get0_public_key(static_cast<EC_KEY*>(ctx)),
                                   POINT_CONVERSION_UNCOMPRESSED, NULL, 0, NULL) - 1;
+#endif
     return 0;
 
 }
 
 int32_t ZrtpDH::getPubKeyBytes(uint8_t *buf) const
 {
+#if OPENSSL_VERSION_NUMBER >= 0x10100003L
+#else
 
     if (pkType == DH2K || pkType == DH3K) {
         // get len of pub_key, prepend with zeros to DH size
@@ -359,6 +364,7 @@ int32_t ZrtpDH::getPubKeyBytes(uint8_t *buf) const
         memcpy(buf, buffer+1, len-1);
         return len-1;
     }
+#endif
     return 0;
 }
 
