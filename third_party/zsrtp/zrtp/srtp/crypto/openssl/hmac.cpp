@@ -55,6 +55,7 @@ void hmac_sha1( uint8_t* key, int32_t key_length,
                 const uint8_t* data_chunks[],
                 uint32_t data_chunck_length[],
                 uint8_t* mac, int32_t* mac_length ) {
+#if OPENSSL_VERSION_NUMBER >= 0x10100003L
     HMAC_CTX *ctx;
 
     ctx = HMAC_CTX_new();
@@ -66,7 +67,7 @@ void hmac_sha1( uint8_t* key, int32_t key_length,
     }
     HMAC_Final(ctx, mac, reinterpret_cast<uint32_t*>(mac_length));
     HMAC_CTX_free(ctx);
-    /*
+#else
     HMAC_CTX ctx;
     HMAC_CTX_init(&ctx);
     HMAC_Init_ex(&ctx, key, key_length, EVP_sha1(), NULL);
@@ -77,38 +78,40 @@ void hmac_sha1( uint8_t* key, int32_t key_length,
     }
     HMAC_Final(&ctx, mac, reinterpret_cast<uint32_t*>(mac_length));
     HMAC_CTX_cleanup(&ctx);
-    */
+#endif
 }
 
 void* createSha1HmacContext(uint8_t* key, int32_t key_length)
 {
+#if OPENSSL_VERSION_NUMBER >= 0x10100003L
     HMAC_CTX *ctx;
 
     ctx = HMAC_CTX_new();
     HMAC_Init_ex(ctx, key, key_length, EVP_sha1(), NULL);
     return ctx;
-    /*
+#else
     HMAC_CTX* ctx = (HMAC_CTX*)malloc(sizeof(HMAC_CTX));
 
     HMAC_CTX_init(ctx);
     HMAC_Init_ex(ctx, key, key_length, EVP_sha1(), NULL);
     return ctx;
-    */
+#endif
 }
 
 void* initializeSha1HmacContext(void* ctx, uint8_t* key, int32_t keyLength)
 {
+#if OPENSSL_VERSION_NUMBER >= 0x10100003L
     HMAC_CTX *pctx = (HMAC_CTX*)ctx;
 
     HMAC_Init_ex(pctx, key, keyLength, EVP_sha1(), NULL);
     return pctx;
-    /*
+#else
     HMAC_CTX *pctx = (HMAC_CTX*)ctx;
 
     HMAC_CTX_init(pctx);
     HMAC_Init_ex(pctx, key, keyLength, EVP_sha1(), NULL);
     return pctx;
-    */
+#endif
 }
 
 void hmacSha1Ctx(void* ctx, const uint8_t* data, uint32_t data_length,
@@ -137,15 +140,16 @@ void hmacSha1Ctx(void* ctx, const uint8_t* data[], uint32_t data_length[],
 
 void freeSha1HmacContext(void* ctx)
 {
+#if OPENSSL_VERSION_NUMBER >= 0x10100003L
     if (ctx) {
         HMAC_CTX_free((HMAC_CTX*)ctx);
     }
-    /*
+#else
     if (ctx) {
         HMAC_CTX_cleanup((HMAC_CTX*)ctx);
         free(ctx);
     }
-    */
+#endif
 }
 
 #if defined(__APPLE__)
