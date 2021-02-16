@@ -37,6 +37,8 @@
 #include <openssl/hmac.h>
 #include <crypto/hmac.h>
 
+#include <openssl_compat.h>
+
 #if defined(__APPLE__)
 #  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -94,7 +96,7 @@ void* initializeSha1HmacContext(void* ctx, uint8_t* key, int32_t keyLength)
 {
     HMAC_CTX *pctx = (HMAC_CTX*)ctx;
 
-    HMAC_CTX_init(pctx);
+    HMAC_CTX_reset(pctx);
     HMAC_Init_ex(pctx, key, keyLength, EVP_sha1(), NULL);
     return pctx;
 }
@@ -126,8 +128,7 @@ void hmacSha1Ctx(void* ctx, const uint8_t* data[], uint32_t data_length[],
 void freeSha1HmacContext(void* ctx)
 {
     if (ctx) {
-        HMAC_CTX_cleanup((HMAC_CTX*)ctx);
-        free(ctx);
+        HMAC_CTX_free((HMAC_CTX*)ctx);
     }
 }
 
