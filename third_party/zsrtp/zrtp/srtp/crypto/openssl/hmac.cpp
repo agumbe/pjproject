@@ -57,37 +57,21 @@ void hmac_sha1( uint8_t* key, int32_t key_length,
                 const uint8_t* data_chunks[],
                 uint32_t data_chunck_length[],
                 uint8_t* mac, int32_t* mac_length ) {
-    HMAC_CTX *ctx;
-    unsigned int res_len;
-
-    ctx = HMAC_CTX_new();
+    HMAC_CTX* ctx = HMAC_CTX_new();
     HMAC_Init_ex(ctx, key, key_length, EVP_sha1(), NULL);
     while (*data_chunks) {
-        HMAC_Update(ctx, data, data_len);
+        HMAC_Update(ctx, *data_chunks, *data_chunck_length);
         data_chunks ++;
         data_chunck_length ++;
     }
     HMAC_Final(ctx, mac, reinterpret_cast<uint32_t*>(mac_length));
     HMAC_CTX_free(ctx);
-    /*
-    HMAC_CTX ctx;
-    HMAC_CTX_init(&ctx);
-    HMAC_Init_ex(&ctx, key, key_length, EVP_sha1(), NULL);
-    while (*data_chunks) {
-        HMAC_Update(&ctx, *data_chunks, *data_chunck_length);
-        data_chunks ++;
-        data_chunck_length ++;
-    }
-    HMAC_Final(&ctx, mac, reinterpret_cast<uint32_t*>(mac_length));
-    HMAC_CTX_cleanup(&ctx);
-    */
 }
 
 void* createSha1HmacContext(uint8_t* key, int32_t key_length)
 {
-    HMAC_CTX* ctx = (HMAC_CTX*)malloc(sizeof(HMAC_CTX));
+    HMAC_CTX* ctx = HMAC_CTX_new();
 
-    HMAC_CTX_init(ctx);
     HMAC_Init_ex(ctx, key, key_length, EVP_sha1(), NULL);
     return ctx;
 }
