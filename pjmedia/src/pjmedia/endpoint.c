@@ -758,7 +758,7 @@ PJ_DEF(pj_status_t) pjmedia_endpt_create_text_sdp(pjmedia_endpt *endpt,
     fmt->slen = pj_utoa(PJMEDIA_FORMAT_RED, fmt->ptr);
 
     rtpmap.pt = *fmt;
-    rtpmap.enc_name = pj_str((char*)"red";
+    rtpmap.enc_name = pj_str((char*)"red");
     rtpmap.clock_rate = 1000;
 
     rtpmap.param.ptr = "";
