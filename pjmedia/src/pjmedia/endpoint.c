@@ -775,7 +775,7 @@ PJ_DEF(pj_status_t) pjmedia_endpt_create_text_sdp(pjmedia_endpt *endpt,
     fmt->slen = pj_utoa(PJMEDIA_FORMAT_T140, fmt->ptr);
 
     rtpmap.pt = *fmt;
-    rtpmap.enc_name = pj_str((char*)"t140";
+    rtpmap.enc_name = pj_str((char*)"t140");
     rtpmap.clock_rate = 1000;
 
     rtpmap.param.ptr = "";
