@@ -712,6 +712,94 @@ PJ_DEF(pj_status_t) pjmedia_endpt_create_audio_sdp(pjmedia_endpt *endpt,
 }
 
 
+/* Create m=text SDP media line */
+PJ_DEF(pj_status_t) pjmedia_endpt_create_text_sdp(pjmedia_endpt *endpt,
+                                                   pj_pool_t *pool,
+                                                   const pjmedia_sock_info *si,
+                                                   unsigned options,
+                                                   pjmedia_sdp_media **p_m)
+{
+    const pj_str_t STR_TEXT = { "text", 4 };
+    pjmedia_sdp_media *m;
+    unsigned t140_pt;
+    unsigned red_pt;
+    pjmedia_sdp_attr *attr;
+    unsigned i;
+    unsigned max_bitrate = 0;
+    pj_status_t status;
+    pjmedia_codec_info *codec_info;
+    pjmedia_sdp_rtpmap rtpmap;
+    char tmp_param[3];
+    pjmedia_codec_param codec_param;
+    pj_str_t *fmt;
+    pjmedia_format      dec_fmt;
+
+    enum { MAX_FMTP_STR_LEN = 160 };
+    char buf[MAX_FMTP_STR_LEN];
+    unsigned buf_len = 0, ii;
+
+    PJ_UNUSED_ARG(options);
+
+    /* Check that there are not too many codecs */
+    PJ_ASSERT_RETURN(endpt->codec_mgr.codec_cnt <= PJMEDIA_MAX_SDP_FMT,
+		     PJ_ETOOMANY);
+
+    /* Create and init basic SDP media */
+    m = PJ_POOL_ZALLOC_T(pool, pjmedia_sdp_media);
+    status = init_sdp_media(m, pool, &STR_TEXT, si);
+    if (status != PJ_SUCCESS)
+	return status;
+
+    red_pt = m->desc.fmt_count++;
+    /* Add format, rtpmap, and fmtp (when applicable) for each codec */
+    fmt = &m->desc.fmt[red_pt];
+
+    fmt->ptr = (char*) pj_pool_alloc(pool, 8);
+    fmt->slen = pj_utoa(PJMEDIA_FORMAT_RED, fmt->ptr);
+
+    rtpmap.pt = *fmt;
+    rtpmap.enc_name = pj_str((char*)"red";
+    rtpmap.clock_rate = 1000;
+
+    rtpmap.param.ptr = "";
+    rtpmap.param.slen = 0;
+
+    pjmedia_sdp_rtpmap_to_attr(pool, &rtpmap, &attr);
+    m->attr[m->attr_count++] = attr;
+
+    t140_pt = m->desc.fmt_count++;
+    /* Add format, rtpmap, and fmtp (when applicable) for each codec */
+    fmt = &m->desc.fmt[t140_pt];
+
+    fmt->ptr = (char*) pj_pool_alloc(pool, 8);
+    fmt->slen = pj_utoa(PJMEDIA_FORMAT_T140, fmt->ptr);
+
+    rtpmap.pt = *fmt;
+    rtpmap.enc_name = pj_str((char*)"t140";
+    rtpmap.clock_rate = 1000;
+
+    rtpmap.param.ptr = "";
+    rtpmap.param.slen = 0;
+
+    pjmedia_sdp_rtpmap_to_attr(pool, &rtpmap, &attr);
+    m->attr[m->attr_count++] = attr;
+
+    pj_ansi_snprintf(buf,
+                MAX_FMTP_STR_LEN,
+                "%d %d/%d/%d",
+                red_pt, t140_pt, t140_pt, t140_pt);
+
+    attr = PJ_POOL_ZALLOC_T(pool, pjmedia_sdp_attr);
+
+    attr->name = pj_str("fmtp");
+    attr->value = pj_strdup3(pool, buf);
+    m->attr[m->attr_count++] = attr;
+
+    *p_m = m;
+    return PJ_SUCCESS;
+}
+
+
 #if defined(PJMEDIA_HAS_VIDEO) && (PJMEDIA_HAS_VIDEO != 0)
 
 /* Create m=video SDP media line */

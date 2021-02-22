@@ -45,7 +45,8 @@ typedef enum pjmedia_frame_type
     PJMEDIA_FRAME_TYPE_NONE,	    /**< No frame.		*/
     PJMEDIA_FRAME_TYPE_AUDIO,	    /**< Normal audio frame.	*/
     PJMEDIA_FRAME_TYPE_EXTENDED,    /**< Extended audio frame.	*/
-    PJMEDIA_FRAME_TYPE_VIDEO        /**< Video frame.           */
+    PJMEDIA_FRAME_TYPE_VIDEO,        /**< Video frame.           */
+    PJMEDIA_FRAME_TYPE_TEXT         /*** Text Frame             */
 
 } pjmedia_frame_type;
 
