@@ -55,8 +55,8 @@ PJ_BEGIN_DECL
  */
 struct pjmedia_rtt_stream
 {
-        pjmedia_sdp_session *pj_local_sdp;
-        pjmedia_sdp_session *pj_remote_sdp;
+        pjmedia_sdp_session *   local_sdp;
+        pjmedia_sdp_session *   remote_sdp;
         pjmedia_transport       *transport;	    /* To send/recv RTP/RTCP	*/
 
         unsigned                sdp_index;
@@ -111,8 +111,8 @@ typedef struct pjmedia_rtt_stream pjmedia_rtt_stream;
  */
 PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
         pjmedia_endpt * 	endpt,
-        pjmedia_sdp_session *pj_local_sdp,
-        pjmedia_sdp_session *pj_remote_sdp,
+        pjmedia_sdp_session *   local_sdp,
+        pjmedia_sdp_session *   remote_sdp,
         unsigned             sdp_index,
         pj_status_t(* 	on_rx_rtt )(void * obj, const void *rtt_text, unsigned length),
         void *                  cb_obj,

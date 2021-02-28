@@ -43,6 +43,13 @@
 #define LOGERR_(expr)			PJ_PERROR(4,expr);
 #define TRC_(expr)			PJ_LOG(5,expr)
 
+static void destroy_call_media(pjmedia_rtt_stream * rtt_stream);
+static void on_rx_rtp(void *user_data, void *pkt, pj_ssize_t size);
+static void on_rx_rtcp(void *user_data, void *pkt, pj_ssize_t size);
+static int media_thread(void *arg);
+static void call_on_media_update( pjsip_inv_session *inv, pj_status_t status);
+static void destroy_call_media(pjmedia_rtt_stream * rtt_stream);
+
 /**
  * Create text media stream.
  *
@@ -55,8 +62,8 @@
 
 PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
         pjmedia_endpt * 	endpt,
-        pjmedia_sdp_session *pj_local_sdp,
-        pjmedia_sdp_session *pj_remote_sdp,
+        pjmedia_sdp_session *local_sdp,
+        pjmedia_sdp_session *remote_sdp,
         unsigned             sdp_index,
         pj_status_t(* 	on_rx_rtt )(void * obj, const void *rtt_text, unsigned length),
         void *                  cb_obj,
@@ -67,8 +74,8 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
         rtt_stream = PJ_POOL_ZALLOC_T(pool, pjmedia_rtt_stream);
 
         if (rtt_stream != NULL) {
-                rtt_stream->pj_local_sdp = pj_local_sdp;
-                rtt_stream->pj_remote_sdp = pj_remote_sdp;
+                rtt_stream->local_sdp = local_sdp;
+                rtt_stream->remote_sdp = remote_sdp;
                 rtt_stream->transport = transport;
                 rtt_stream->endpt = endpt;
                 rtt_stream->sdp_index = sdp_index;
@@ -531,7 +538,6 @@ static void call_on_media_update( pjsip_inv_session *inv,
     /* Set the media as active */
     audio->active = PJ_TRUE;
 }
-
 
 
 /* Destroy call's media */
