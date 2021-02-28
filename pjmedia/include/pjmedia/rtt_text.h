@@ -26,6 +26,10 @@
  */
 #include <pjmedia/types.h>
 #include <pj/sock.h>
+#include <pjmedia/codec.h>
+#include <pjmedia/sdp.h>
+#include <pjmedia/transport.h>
+#include <pjmedia-audiodev/audiodev.h>
 
 /**
  * @defgroup PJMEDIA_SDP SDP Parsing and Data Structure
