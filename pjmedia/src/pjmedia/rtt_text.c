@@ -166,6 +166,8 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
 
         /* Set the media as active */
         text_stream->active = PJ_TRUE;
+
+        return 0;
 }
 
 
@@ -255,7 +257,7 @@ static void on_rx_rtp(void *user_data, void *pkt, pj_ssize_t size)
         pjmedia_rtp_session_update(&strm->in_sess, hdr, NULL);
 
         if (strm->on_rx_rtt != NULL) {
-                strm->on_rx_rtt(strm->cb_obj, pkt, size)
+                strm->on_rx_rtt(strm->cb_obj, pkt, size);
         }
 }
 
@@ -295,9 +297,6 @@ static int media_thread(void *arg)
         char packet[1500];
         unsigned msec_interval;
         pj_timestamp freq, next_rtp, next_rtcp;
-        pj_str_t *              payloads[20];
-        unsigned                num_payloads;
-
 
         /* Boost thread priority if necessary */
         boost_priority();
@@ -383,12 +382,12 @@ static int media_thread(void *arg)
                                         /* Zero the payload */
                                         pj_bzero(packet+hdrlen, strm->bytes_per_frame);
 
-                                        status = pj_mutex_lock(text_stream->lock);
+                                        status = pj_mutex_lock(strm->lock);
                                         if (status == PJ_SUCCESS) {
                                                 pj_str_t * payload = strm->payloads[strm->num_payloads--];
                                                 pj_memcpy(packet+hdrlen, payload->ptr, payload->slen);
 
-                                                pj_mutex_unlock(text_stream->lock);
+                                                pj_mutex_unlock(strm->lock);
 
                                                 /* Send RTP packet */
                                                 size = hdrlen + strm->bytes_per_frame;
