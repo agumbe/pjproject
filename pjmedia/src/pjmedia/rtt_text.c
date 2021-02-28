@@ -257,7 +257,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
 PJ_DECL(pj_status_t) pjmedia_text_stream_send_text(pjmedia_rtt_stream* text_stream, pj_str_t * payload)
 {
         pj_status_t     status;
-        if (text_stream == NULL
+        if (text_stream == NULL)
                 return -1;
         status = pj_mutex_lock(text_stream->lock);
         if (status != PJ_SUCCESS) {
