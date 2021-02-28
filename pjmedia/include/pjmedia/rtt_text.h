@@ -62,7 +62,6 @@ struct pjmedia_rtt_stream
 
         unsigned                sdp_index;
 
-	pjmedia_stream_info * 	si;
         pj_pool_t * 	pool;
         pjmedia_endpt * 	endpt;
 
