@@ -58,7 +58,7 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
         pjmedia_sdp_session *pj_local_sdp,
         pjmedia_sdp_session *pj_remote_sdp,
         unsigned             sdp_index,
-        pj_status_t(* 	on_rx_rtt )(const void *rtt_text, unsigned length),
+        pj_status_t(* 	on_rx_rtt )(void * obj, const void *rtt_text, unsigned length),
         void *                  cb_obj,
         pjmedia_transport       *transport)
 {
@@ -78,7 +78,7 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
 
                 status = pj_mutex_create_simple(pool, "rtt_text", &rtt_stream->lock);
                 if (status != PJ_SUCCESS) {
-                        app_perror(THIS_FILE, "acquiring mutex failed", status);
+                        //app_perror(THIS_FILE, "acquiring mutex failed", status);
                         return NULL;
                 }
         }
@@ -107,14 +107,14 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
 
         /* Do nothing if media negotiation has failed */
         if (status != PJ_SUCCESS) {
-                app_perror(THIS_FILE, "SDP negotiation failed", status);
+                //app_perror(THIS_FILE, "SDP negotiation failed", status);
                 return status;
         }
 
         status = pjmedia_stream_info_from_sdp(&text_stream->si, text_stream->pool, text_stream->endpt,
                                   text_stream->local_sdp, text_stream->remote_sdp, 0);
         if (status != PJ_SUCCESS) {
-                app_perror(THIS_FILE, "Error creating stream info from SDP", status);
+                //app_perror(THIS_FILE, "Error creating stream info from SDP", status);
                 return status;
         }
 
@@ -140,7 +140,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
                                       &on_rx_rtp,
                                       &on_rx_rtcp);
         if (status != PJ_SUCCESS) {
-                app_perror(THIS_FILE, "Error on pjmedia_transport_attach()", status);
+                //app_perror(THIS_FILE, "Error on pjmedia_transport_attach()", status);
                 return status;
         }
 
@@ -153,7 +153,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
         status = pj_thread_create( text_stream->pool, "media", &media_thread, text_stream,
                                0, 0, &text_stream->thread);
         if (status != PJ_SUCCESS) {
-                app_perror(THIS_FILE, "Error creating media thread", status);
+                //app_perror(THIS_FILE, "Error creating media thread", status);
                 return status;
         }
 #endif
@@ -226,7 +226,7 @@ static void on_rx_rtp(void *user_data, void *pkt, pj_ssize_t size)
 
         /* Check for errors */
         if (size < 0) {
-                app_perror(THIS_FILE, "RTP recv() error", (pj_status_t)-size);
+                //app_perror(THIS_FILE, "RTP recv() error", (pj_status_t)-size);
                 return;
         }
 
@@ -235,7 +235,7 @@ static void on_rx_rtp(void *user_data, void *pkt, pj_ssize_t size)
                                         pkt, (int)size,
                                         &hdr, &payload, &payload_len);
         if (status != PJ_SUCCESS) {
-                app_perror(THIS_FILE, "RTP decode error", status);
+                //app_perror(THIS_FILE, "RTP decode error", status);
                 return;
         }
 
@@ -268,7 +268,7 @@ static void on_rx_rtcp(void *user_data, void *pkt, pj_ssize_t size)
 
     /* Check for errors */
     if (size < 0) {
-	app_perror(THIS_FILE, "Error receiving RTCP packet",(pj_status_t)-size);
+	//app_perror(THIS_FILE, "Error receiving RTCP packet",(pj_status_t)-size);
 	return;
     }
 
@@ -388,8 +388,8 @@ static int media_thread(void *arg)
                                                 size = hdrlen + strm->bytes_per_frame;
                                                 status = pjmedia_transport_send_rtp(strm->transport,
                                                                             packet, size);
-                                                if (status != PJ_SUCCESS)
-                                                        app_perror(THIS_FILE, "Error sending RTP packet", status);
+                                                //if (status != PJ_SUCCESS)
+                                                //        app_perror(THIS_FILE, "Error sending RTP packet", status);
 
                                         }
                                 } else {
@@ -423,7 +423,7 @@ static int media_thread(void *arg)
                         status = pjmedia_transport_send_rtcp(strm->transport,
                                                          rtcp_pkt, size);
                         if (status != PJ_SUCCESS) {
-                                app_perror(THIS_FILE, "Error sending RTCP packet", status);
+                                //app_perror(THIS_FILE, "Error sending RTCP packet", status);
                         }
 
                         /* Schedule next send */
@@ -456,7 +456,7 @@ static void call_on_media_update( pjsip_inv_session *inv,
 
     /* Do nothing if media negotiation has failed */
     if (status != PJ_SUCCESS) {
-	app_perror(THIS_FILE, "SDP negotiation failed", status);
+	//app_perror(THIS_FILE, "SDP negotiation failed", status);
 	return;
     }
 
@@ -468,7 +468,7 @@ static void call_on_media_update( pjsip_inv_session *inv,
     status = pjmedia_stream_info_from_sdp(&audio->si, inv->pool, app.med_endpt,
 					  local_sdp, remote_sdp, 0);
     if (status != PJ_SUCCESS) {
-	app_perror(THIS_FILE, "Error creating stream info from SDP", status);
+	//app_perror(THIS_FILE, "Error creating stream info from SDP", status);
 	return;
     }
 
@@ -510,7 +510,7 @@ static void call_on_media_update( pjsip_inv_session *inv,
 				      &on_rx_rtp,
 				      &on_rx_rtcp);
     if (status != PJ_SUCCESS) {
-	app_perror(THIS_FILE, "Error on pjmedia_transport_attach()", status);
+	//app_perror(THIS_FILE, "Error on pjmedia_transport_attach()", status);
 	return;
     }
 
@@ -523,7 +523,7 @@ static void call_on_media_update( pjsip_inv_session *inv,
     status = pj_thread_create( inv->pool, "media", &media_thread, audio,
 			       0, 0, &audio->thread);
     if (status != PJ_SUCCESS) {
-	app_perror(THIS_FILE, "Error creating media thread", status);
+	//app_perror(THIS_FILE, "Error creating media thread", status);
 	return;
     }
 #endif
