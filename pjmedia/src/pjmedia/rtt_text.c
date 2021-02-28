@@ -22,7 +22,6 @@
 #include <pjmedia/rtp.h>
 #include <pjmedia/rtcp.h>
 #include <pjmedia/jbuf.h>
-#include <pjmedia/rtt_text.h>
 #include <pj/array.h>
 #include <pj/assert.h>
 #include <pj/ctype.h>
@@ -35,6 +34,8 @@
 #include <pj/rand.h>
 #include <pj/sock_select.h>
 #include <pj/string.h>	    /* memcpy() */
+#include <pjlib.h>
+#include <pjmedia/rtt_text.h>
 
 
 #define THIS_FILE			"rtt_text.c"
