@@ -49,6 +49,80 @@ static void on_rx_rtcp(void *user_data, void *pkt, pj_ssize_t size);
 static int media_thread(void *arg);
 static void destroy_call_media(pjmedia_rtt_stream * rtt_stream);
 
+#if (defined(PJ_WIN32) && PJ_WIN32 != 0) || (defined(PJ_WIN64) && PJ_WIN64 != 0)
+#include <windows.h>
+static void boost_priority(void)
+{
+    SetPriorityClass( GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
+    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
+}
+
+#elif defined(PJ_LINUX) && PJ_LINUX != 0
+#include <pthread.h>
+static void boost_priority(void)
+{
+#define POLICY	SCHED_FIFO
+    struct sched_param tp;
+    int max_prio;
+    int policy;
+    int rc;
+
+    if (sched_get_priority_min(POLICY) < sched_get_priority_max(POLICY))
+	max_prio = sched_get_priority_max(POLICY)-1;
+    else
+	max_prio = sched_get_priority_max(POLICY)+1;
+
+    /*
+     * Adjust process scheduling algorithm and priority
+     */
+    rc = sched_getparam(0, &tp);
+    if (rc != 0) {
+	app_perror( THIS_FILE, "sched_getparam error",
+		    PJ_RETURN_OS_ERROR(rc));
+	return;
+    }
+    tp.sched_priority = max_prio;
+
+    rc = sched_setscheduler(0, POLICY, &tp);
+    if (rc != 0) {
+	app_perror( THIS_FILE, "sched_setscheduler error",
+		    PJ_RETURN_OS_ERROR(rc));
+    }
+
+    PJ_LOG(4, (THIS_FILE, "New process policy=%d, priority=%d",
+	      policy, tp.sched_priority));
+
+    /*
+     * Adjust thread scheduling algorithm and priority
+     */
+    rc = pthread_getschedparam(pthread_self(), &policy, &tp);
+    if (rc != 0) {
+	app_perror( THIS_FILE, "pthread_getschedparam error",
+		    PJ_RETURN_OS_ERROR(rc));
+	return;
+    }
+
+    PJ_LOG(4, (THIS_FILE, "Old thread policy=%d, priority=%d",
+	      policy, tp.sched_priority));
+
+    policy = POLICY;
+    tp.sched_priority = max_prio;
+
+    rc = pthread_setschedparam(pthread_self(), policy, &tp);
+    if (rc != 0) {
+	app_perror( THIS_FILE, "pthread_setschedparam error",
+		    PJ_RETURN_OS_ERROR(rc));
+	return;
+    }
+
+    PJ_LOG(4, (THIS_FILE, "New thread policy=%d, priority=%d",
+	      policy, tp.sched_priority));
+}
+
+#else
+#  define boost_priority()
+#endif
+
 /**
  * Create text media stream.
  *
@@ -184,7 +258,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_send_text(pjmedia_rtt_stream* text_stre
 {
         pj_status_t     status;
         if (text_stream == NULL
-                return -1
+                return -1;
         status = pj_mutex_lock(text_stream->lock);
         if (status != PJ_SUCCESS) {
                 return -1;
