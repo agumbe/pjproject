@@ -24,6 +24,7 @@
  * @file rtt_text.h
  * @brief SDP header file.
  */
+#include <pj/pool.h>
 #include <pjmedia/types.h>
 #include <pj/sock.h>
 #include <pjmedia/codec.h>
