@@ -59,6 +59,7 @@
 #include <pjmedia/sound.h>
 #include <pjmedia/sound_port.h>
 #include <pjmedia/splitcomb.h>
+#include <pjmedia/rtt_text.h>
 #include <pjmedia/stereo.h>
 #include <pjmedia/stream.h>
 #include <pjmedia/stream_common.h>
