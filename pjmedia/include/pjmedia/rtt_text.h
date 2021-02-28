@@ -47,7 +47,6 @@
 
 PJ_BEGIN_DECL
 
-
 /**
  * Generic representation of attribute.
  */
@@ -100,8 +99,6 @@ struct pjmedia_rtt_stream
  * @see pjmedia_sdp_attr
  */
 typedef struct pjmedia_rtt_stream pjmedia_rtt_stream;
-
-pjmedia_stream_create
 
 /**
  * Create text media stream.
