@@ -77,16 +77,16 @@ static void boost_priority(void)
      */
     rc = sched_getparam(0, &tp);
     if (rc != 0) {
-	app_perror( THIS_FILE, "sched_getparam error",
-		    PJ_RETURN_OS_ERROR(rc));
+	//app_perror( THIS_FILE, "sched_getparam error",
+	//	    PJ_RETURN_OS_ERROR(rc));
 	return;
     }
     tp.sched_priority = max_prio;
 
     rc = sched_setscheduler(0, POLICY, &tp);
     if (rc != 0) {
-	app_perror( THIS_FILE, "sched_setscheduler error",
-		    PJ_RETURN_OS_ERROR(rc));
+	//app_perror( THIS_FILE, "sched_setscheduler error",
+	//	    PJ_RETURN_OS_ERROR(rc));
     }
 
     PJ_LOG(4, (THIS_FILE, "New process policy=%d, priority=%d",
@@ -97,8 +97,8 @@ static void boost_priority(void)
      */
     rc = pthread_getschedparam(pthread_self(), &policy, &tp);
     if (rc != 0) {
-	app_perror( THIS_FILE, "pthread_getschedparam error",
-		    PJ_RETURN_OS_ERROR(rc));
+	//app_perror( THIS_FILE, "pthread_getschedparam error",
+	//	    PJ_RETURN_OS_ERROR(rc));
 	return;
     }
 
@@ -110,8 +110,8 @@ static void boost_priority(void)
 
     rc = pthread_setschedparam(pthread_self(), policy, &tp);
     if (rc != 0) {
-	app_perror( THIS_FILE, "pthread_setschedparam error",
-		    PJ_RETURN_OS_ERROR(rc));
+	//app_perror( THIS_FILE, "pthread_setschedparam error",
+	//	    PJ_RETURN_OS_ERROR(rc));
 	return;
     }
 
@@ -225,10 +225,11 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
         }
 
         /* Start media transport */
-        pjmedia_transport_media_start(text_stream->transport, text_stream->local_sdp, text_stream->remote_sdp, text_stream->sdp_index);
+        pjmedia_transport_media_start(text_stream->transport, text_stream->pool, text_stream->local_sdp,
+                                        text_stream->remote_sdp, text_stream->sdp_index);
 
         /* Start media thread. */
-        audio->thread_quit_flag = 0;
+        text_stream->thread_quit_flag = 0;
 #if PJ_HAS_THREADS
         status = pj_thread_create( text_stream->pool, "media", &media_thread, text_stream,
                                0, 0, &text_stream->thread);
@@ -373,7 +374,8 @@ static int media_thread(void *arg)
         pj_timestamp freq, next_rtp, next_rtcp;
 
         /* Boost thread priority if necessary */
-        boost_priority();
+        /* tenp commented */
+        //boost_priority();
 
         /* Let things settle */
         pj_thread_sleep(100);
