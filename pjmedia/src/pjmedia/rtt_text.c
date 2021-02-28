@@ -184,13 +184,6 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
         if (text_stream->thread != NULL)
                 destroy_call_media(text_stream);
 
-
-        /* Do nothing if media negotiation has failed */
-        if (status != PJ_SUCCESS) {
-                //app_perror(THIS_FILE, "SDP negotiation failed", status);
-                return status;
-        }
-
         status = pjmedia_stream_info_from_sdp(&text_stream->si, text_stream->pool, text_stream->endpt,
                                   text_stream->local_sdp, text_stream->remote_sdp, 0);
         if (status != PJ_SUCCESS) {
