@@ -115,6 +115,7 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
         pjmedia_sdp_session *pj_remote_sdp,
         unsigned             sdp_index,
         pj_status_t(* 	on_rx_rtt )(const pj_str_t *rtt_text),
+        void *                  cb_obj,
         pjmedia_transport       *transport);
 
 /**

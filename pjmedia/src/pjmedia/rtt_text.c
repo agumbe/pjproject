@@ -52,12 +52,13 @@
  *
  * @return		The new SDP attribute.
  */
+
 PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
         pjmedia_endpt * 	endpt,
         pjmedia_sdp_session *pj_local_sdp,
         pjmedia_sdp_session *pj_remote_sdp,
         unsigned             sdp_index,
-        pj_status_t(* 	on_rx_rtt )(const pj_str_t *rtt_text),
+        pj_status_t(* 	on_rx_rtt )(const void *rtt_text, unsigned length),
         void *                  cb_obj,
         pjmedia_transport       *transport)
 {
@@ -75,7 +76,7 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
                 rtt_stream->on_rx_rtt = on_rx_rtt;
                 rtt_stream->cb_obj = cb_obj;
 
-                status = pj_mutex_create_simple(pool, "rtt_text", &rtt_stream->lock)
+                status = pj_mutex_create_simple(pool, "rtt_text", &rtt_stream->lock);
                 if (status != PJ_SUCCESS) {
                         app_perror(THIS_FILE, "acquiring mutex failed", status);
                         return NULL;
