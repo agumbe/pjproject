@@ -55,8 +55,8 @@ PJ_BEGIN_DECL
  */
 struct pjmedia_rtt_stream
 {
-        cdef pjmedia_sdp_session *pj_local_sdp;
-        cdef pjmedia_sdp_session *pj_remote_sdp;
+        pjmedia_sdp_session *pj_local_sdp;
+        pjmedia_sdp_session *pj_remote_sdp;
         pjmedia_transport       *transport;	    /* To send/recv RTP/RTCP	*/
 
         unsigned                sdp_index;
