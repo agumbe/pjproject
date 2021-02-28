@@ -31,6 +31,7 @@
 #include <pjmedia/sdp.h>
 #include <pjmedia/transport.h>
 #include <pjmedia-audiodev/audiodev.h>
+#include <pjmedia/stream.h>
 
 /**
  * @defgroup PJMEDIA_SDP SDP Parsing and Data Structure
