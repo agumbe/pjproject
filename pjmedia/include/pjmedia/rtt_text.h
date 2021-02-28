@@ -81,7 +81,7 @@ struct pjmedia_rtt_stream
         unsigned                num_payloads;
 
         unsigned                marker;
-        pj_mutex *              lock;
+        pj_mutex_t *              lock;
 
         /* RTP session: */
         pjmedia_rtp_session	 out_sess;	    /* outgoing RTP session	*/
