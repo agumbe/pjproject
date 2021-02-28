@@ -47,7 +47,6 @@ static void destroy_call_media(pjmedia_rtt_stream * rtt_stream);
 static void on_rx_rtp(void *user_data, void *pkt, pj_ssize_t size);
 static void on_rx_rtcp(void *user_data, void *pkt, pj_ssize_t size);
 static int media_thread(void *arg);
-static void call_on_media_update( pjsip_inv_session *inv, pj_status_t status);
 static void destroy_call_media(pjmedia_rtt_stream * rtt_stream);
 
 /**
@@ -440,103 +439,6 @@ static int media_thread(void *arg)
         }
 
         return 0;
-}
-
-
-/* Callback to be called when SDP negotiation is done in the call: */
-static void call_on_media_update( pjsip_inv_session *inv,
-				  pj_status_t status)
-{
-    struct call *call;
-    struct pjmedia_rtt_stream *audio;
-    const pjmedia_sdp_session *local_sdp, *remote_sdp;
-    struct codec *codec_desc = NULL;
-    unsigned i;
-
-    call = inv->mod_data[mod_siprtp.id];
-    audio = &call->media[0];
-
-    /* If this is a mid-call media update, then destroy existing media */
-    if (audio->thread != NULL)
-	destroy_call_media(call->index);
-
-
-    /* Do nothing if media negotiation has failed */
-    if (status != PJ_SUCCESS) {
-	//app_perror(THIS_FILE, "SDP negotiation failed", status);
-	return;
-    }
-
-
-    /* Capture stream definition from the SDP */
-    pjmedia_sdp_neg_get_active_local(inv->neg, &local_sdp);
-    pjmedia_sdp_neg_get_active_remote(inv->neg, &remote_sdp);
-
-    status = pjmedia_stream_info_from_sdp(&audio->si, inv->pool, app.med_endpt,
-					  local_sdp, remote_sdp, 0);
-    if (status != PJ_SUCCESS) {
-	//app_perror(THIS_FILE, "Error creating stream info from SDP", status);
-	return;
-    }
-
-    /* Get the remainder of codec information from codec descriptor */
-    if (audio->si.fmt.pt == app.audio_codec.pt)
-	codec_desc = &app.audio_codec;
-    else {
-	/* Find the codec description in codec array */
-	for (i=0; i<PJ_ARRAY_SIZE(audio_codecs); ++i) {
-	    if (audio_codecs[i].pt == audio->si.fmt.pt) {
-		codec_desc = &audio_codecs[i];
-		break;
-	    }
-	}
-
-	if (codec_desc == NULL) {
-	    PJ_LOG(3, (THIS_FILE, "Error: Invalid codec payload type"));
-	    return;
-	}
-    }
-
-    audio->clock_rate = audio->si.fmt.clock_rate;
-    audio->samples_per_frame = audio->clock_rate * codec_desc->ptime / 1000;
-    audio->bytes_per_frame = codec_desc->bit_rate * codec_desc->ptime / 1000 / 8;
-
-
-    pjmedia_rtp_session_init(&audio->out_sess, audio->si.tx_pt,
-			     pj_rand());
-    pjmedia_rtp_session_init(&audio->in_sess, audio->si.fmt.pt, 0);
-    pjmedia_rtcp_init(&audio->rtcp, "rtcp", audio->clock_rate,
-		      audio->samples_per_frame, 0);
-
-
-    /* Attach media to transport */
-    status = pjmedia_transport_attach(audio->transport, audio,
-				      &audio->si.rem_addr,
-				      &audio->si.rem_rtcp,
-				      sizeof(pj_sockaddr_in),
-				      &on_rx_rtp,
-				      &on_rx_rtcp);
-    if (status != PJ_SUCCESS) {
-	//app_perror(THIS_FILE, "Error on pjmedia_transport_attach()", status);
-	return;
-    }
-
-    /* Start media transport */
-    pjmedia_transport_media_start(audio->transport, 0, 0, 0, 0);
-
-    /* Start media thread. */
-    audio->thread_quit_flag = 0;
-#if PJ_HAS_THREADS
-    status = pj_thread_create( inv->pool, "media", &media_thread, audio,
-			       0, 0, &audio->thread);
-    if (status != PJ_SUCCESS) {
-	//app_perror(THIS_FILE, "Error creating media thread", status);
-	return;
-    }
-#endif
-
-    /* Set the media as active */
-    audio->active = PJ_TRUE;
 }
 
 
