@@ -258,7 +258,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_send_text(pjmedia_rtt_stream* text_stre
         if (status != PJ_SUCCESS) {
                 return -1;
         }
-        pj_strdup(text_stream->pool, &dup_payload, &payload)
+        pj_strdup(text_stream->pool, &dup_payload, &payload);
         text_stream->payloads[text_stream->num_payloads++] = dup_payload;
         pj_mutex_unlock(text_stream->lock);
         return 0;
