@@ -89,7 +89,7 @@ struct pjmedia_rtt_stream
         /* RTCP stats: */
         pjmedia_rtcp_session    rtcp;		    /* incoming RTCP session.	*/
 
-        pj_status_t(* 	on_rx_rtt )(void * obj, const void *rtt_text, unsigned length);
+        pj_status_t(* 	on_rx_rtt )(void * obj, const void *rtt_text, unsigned length, unsigned ts);
         void *                  cb_obj;
         /* Thread: */
         pj_bool_t		 thread_quit_flag;  /* Stop media thread.	*/
@@ -115,7 +115,7 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
         pjmedia_sdp_session *   local_sdp,
         pjmedia_sdp_session *   remote_sdp,
         unsigned             sdp_index,
-        pj_status_t(* 	on_rx_rtt )(void * obj, const void *rtt_text, unsigned length),
+        pj_status_t(* 	on_rx_rtt )(void * obj, const void *rtt_text, unsigned length, unsigned ts),
         void *                  cb_obj,
         pjmedia_transport       *transport);
 

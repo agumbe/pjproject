@@ -138,7 +138,7 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
         pjmedia_sdp_session *local_sdp,
         pjmedia_sdp_session *remote_sdp,
         unsigned             sdp_index,
-        pj_status_t(* 	on_rx_rtt )(void * obj, const void *rtt_text, unsigned length),
+        pj_status_t(* 	on_rx_rtt )(void * obj, const void *rtt_text, unsigned length, unsigned  ts),
         void *                  cb_obj,
         pjmedia_transport       *transport)
 {
@@ -325,7 +325,7 @@ static void on_rx_rtp(void *user_data, void *pkt, pj_ssize_t size)
         pjmedia_rtp_session_update(&strm->in_sess, hdr, NULL);
 
         if (strm->on_rx_rtt != NULL) {
-                strm->on_rx_rtt(strm->cb_obj, pkt, size);
+                strm->on_rx_rtt(strm->cb_obj, payload, payload_len, pj_ntohl(hdr->ts));
         }
 }
 
