@@ -76,11 +76,11 @@ struct pjmedia_rtt_stream
         unsigned		 samples_per_frame; /* samples per frame	*/
         unsigned		 bytes_per_frame;   /* frame size.		*/
 
-        pj_str_t *              payloads[20];
-        unsigned                num_payloads;
+        pj_str_t               payloads[20];
+        unsigned               num_payloads;
 
         unsigned                marker;
-        pj_mutex_t *              lock;
+        pj_mutex_t *            lock;
 
         /* RTP session: */
         pjmedia_rtp_session	 out_sess;	    /* outgoing RTP session	*/
@@ -139,7 +139,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream);
  *
  * @return		status.
  */
-PJ_DECL(pj_status_t) pjmedia_text_stream_send_text(pjmedia_rtt_stream* text_stream, pj_str_t * payload);
+PJ_DECL(pj_status_t) pjmedia_text_stream_send_text(pjmedia_rtt_stream* text_stream, pj_str_t payload);
 
 /**
  * stop text media stream.

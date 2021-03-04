@@ -248,16 +248,18 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
  *
  * @return		status.
  */
-PJ_DECL(pj_status_t) pjmedia_text_stream_send_text(pjmedia_rtt_stream* text_stream, pj_str_t * payload)
+PJ_DECL(pj_status_t) pjmedia_text_stream_send_text(pjmedia_rtt_stream* text_stream, pj_str_t payload)
 {
         pj_status_t     status;
+        pj_str_t        dup_payload;
         if (text_stream == NULL)
                 return -1;
         status = pj_mutex_lock(text_stream->lock);
         if (status != PJ_SUCCESS) {
                 return -1;
         }
-        text_stream->payloads[text_stream->num_payloads++] = payload;
+        pj_strdup(text_stream->pool, &dup_payload, &payload)
+        text_stream->payloads[text_stream->num_payloads++] = dup_payload;
         pj_mutex_unlock(text_stream->lock);
         return 0;
 }
@@ -453,8 +455,8 @@ static int media_thread(void *arg)
 
                                         status = pj_mutex_lock(strm->lock);
                                         if (status == PJ_SUCCESS) {
-                                                pj_str_t * payload = strm->payloads[strm->num_payloads--];
-                                                pj_memcpy(packet+hdrlen, payload->ptr, payload->slen);
+                                                pj_str_t  payload = strm->payloads[strm->num_payloads--];
+                                                pj_memcpy(packet+hdrlen, payload.ptr, payload.slen);
 
                                                 pj_mutex_unlock(strm->lock);
 
