@@ -711,6 +711,17 @@ PJ_DEF(pj_status_t) pjmedia_endpt_create_audio_sdp(pjmedia_endpt *endpt,
     return PJ_SUCCESS;
 }
 
+/**
+ * These are the dynamic payload types that are used by text codecs in
+ * this library.
+ */
+enum pjmedia_text_pt
+{
+        PJMEDIA_RTP_PT_TEXT_START = (PJMEDIA_RTP_PT_DYNAMIC-1),
+        PJMEDIA_RTP_PT_T140,
+        PJMEDIA_RTP_PT_RED,
+}
+
 
 /* Create m=text SDP media line */
 PJ_DEF(pj_status_t) pjmedia_endpt_create_text_sdp(pjmedia_endpt *endpt,

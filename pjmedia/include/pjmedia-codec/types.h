@@ -134,17 +134,6 @@ enum pjmedia_video_pt
 };
 
 /**
- * These are the dynamic payload types that are used by video codecs in
- * this library.
- */
-enum pjmedia_text_pt
-{
-        PJMEDIA_RTP_PT_TEXT_START = (PJMEDIA_RTP_PT_DYNAMIC-1),
-        PJMEDIA_RTP_PT_T140,
-        PJMEDIA_RTP_PT_RED,
-}
-
-/**
  * @}
  */
 
