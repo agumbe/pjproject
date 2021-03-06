@@ -199,6 +199,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
         */
         text_stream->samples_per_frame = 1;
         text_stream->bytes_per_frame = 1;
+        text_stream->clock_rate = 1000;
 
         pjmedia_rtp_session_init(&text_stream->out_sess, text_stream->si.tx_pt,
                              pj_rand());
