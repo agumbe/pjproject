@@ -755,7 +755,7 @@ PJ_DEF(pj_status_t) pjmedia_endpt_create_text_sdp(pjmedia_endpt *endpt,
     fmt = &m->desc.fmt[red_pt];
 
     fmt->ptr = (char*) pj_pool_alloc(pool, 8);
-    fmt->slen = pj_utoa(PJMEDIA_FORMAT_RED, fmt->ptr);
+    fmt->slen = pj_utoa(PJMEDIA_RTP_PT_RED, fmt->ptr);
 
     rtpmap.pt = *fmt;
     rtpmap.enc_name = pj_str((char*)"red");
@@ -772,7 +772,7 @@ PJ_DEF(pj_status_t) pjmedia_endpt_create_text_sdp(pjmedia_endpt *endpt,
     fmt = &m->desc.fmt[t140_pt];
 
     fmt->ptr = (char*) pj_pool_alloc(pool, 8);
-    fmt->slen = pj_utoa(PJMEDIA_FORMAT_T140, fmt->ptr);
+    fmt->slen = pj_utoa(PJMEDIA_RTP_PT_T140, fmt->ptr);
 
     rtpmap.pt = *fmt;
     rtpmap.enc_name = pj_str((char*)"t140");
@@ -787,7 +787,7 @@ PJ_DEF(pj_status_t) pjmedia_endpt_create_text_sdp(pjmedia_endpt *endpt,
     pj_ansi_snprintf(buf,
                 MAX_FMTP_STR_LEN,
                 "%d %d/%d/%d",
-                red_pt, t140_pt, t140_pt, t140_pt);
+                PJMEDIA_RTP_PT_RED, PJMEDIA_RTP_PT_T140, PJMEDIA_RTP_PT_T140, PJMEDIA_RTP_PT_T140);
 
     attr = PJ_POOL_ZALLOC_T(pool, pjmedia_sdp_attr);
 
