@@ -262,7 +262,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_send_text(pjmedia_rtt_stream* text_stre
         if (text_stream == NULL)
                 return -1;
         pj_get_timestamp(&ts_now);
-        if (text_stream->start_ts == 0) {
+        if (text_stream->start_ts.u32.lo == 0) {
                 text_stream->start_ts = ts_now;
                 ts_offset = 0;
         } else {
