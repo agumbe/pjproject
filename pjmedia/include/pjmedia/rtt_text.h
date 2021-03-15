@@ -52,6 +52,7 @@ struct pjmedia_rtt_send_data {
         unsigned        ts_offset;
         pj_str_t        payload;
 };
+typedef struct pjmedia_rtt_send_data pjmedia_rtt_send_data;
 
 /**
  * Generic representation of attribute.
