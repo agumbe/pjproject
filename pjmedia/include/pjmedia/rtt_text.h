@@ -51,7 +51,7 @@ PJ_BEGIN_DECL
 struct pjmedia_rtt_send_data {
         unsigned        ts_offset;
         pj_str_t        payload;
-}
+};
 
 /**
  * Generic representation of attribute.
