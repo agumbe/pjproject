@@ -421,7 +421,7 @@ void stream_create_rtt_payload(struct pjmedia_rtt_stream *strm, char * payload, 
                                 ts_offset1 = strm->rtt_redundants[1].ts_offset;
                                 last2 = &strm->rtt_redundants[0].payload;
                                 ts_offset2 = strm->rtt_redundants[0].ts_offset;
-                                *length = create_rtt_payload_redundancy2(strm->pt, main_payload, &last1, &last2, ts_offset1,ts_offset2, payload);
+                                *length = create_rtt_payload_redundancy2(strm->pt, main_payload, last1, last2, ts_offset1,ts_offset2, payload);
                                 strm->rtt_redundants[0] = strm->rtt_redundants[1];
                                 if (has_main_payload != 0) {
                                         strm->rtt_redundants[1] = *rtt_send_data;
@@ -480,7 +480,7 @@ static void on_rx_rtp(void *user_data, void *pkt, pj_ssize_t size)
         pjmedia_rtp_session_update(&strm->in_sess, hdr, NULL);
 
         if (strm->on_rx_rtt != NULL) {
-                parse_rtt_payload_redundancy(strm->pool, payload, payload_len, &rtt_data);
+                parse_rtt_payload_redundancy(strm->pool, (char *)payload, payload_len, &rtt_data);
                 strm->on_rx_rtt(strm->cb_obj, rtt_data);
         }
 }
@@ -608,7 +608,7 @@ static int media_thread(void *arg)
                                         /* Zero the payload */
                                         pj_bzero(packet+hdrlen, strm->bytes_per_frame);
 
-                                        stream_create_rtt_payload(strm, packet++hdrlen, &size);
+                                        stream_create_rtt_payload(strm, packet+hdrlen, &size);
 
                                         /* Send RTP packet */
                                         size = hdrlen + size;
