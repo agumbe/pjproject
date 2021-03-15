@@ -82,7 +82,6 @@ struct pjmedia_rtt_stream
         unsigned		 samples_per_frame; /* samples per frame	*/
         unsigned		 bytes_per_frame;   /* frame size.		*/
 
-        //pj_str_t               payloads[20];
         pjmedia_rtt_send_data  rtt_send_data[20];
         pjmedia_rtt_send_data  rtt_redundants[2];
         unsigned               num_rtt_redundants;
