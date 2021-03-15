@@ -312,7 +312,7 @@ void create_red_header(int pt, int ts_offset, int len, char *  header) {
 
 
 int create_rtt_payload_redundancy2(int pt, pj_str_t * main_payload, pj_str_t * last1, pj_str_t * last2,
-        int ts_offset1, int ts_offset2, char * payload) {
+            int ts_offset1, int ts_offset2, char * payload) {
         create_red_header(pt, ts_offset2, last2->slen, payload);
         create_red_header(pt, ts_offset1, last1->slen, payload + 4);
         *(payload + 8) = (char)pt;
@@ -410,7 +410,7 @@ void stream_create_rtt_payload(struct pjmedia_rtt_stream *strm, char * payload, 
                         } else if (strm->num_rtt_redundants == 1) {
                                 last1 = &strm->rtt_redundants[0].payload;
                                 ts_offset1 = strm->rtt_redundants[0].ts_offset;
-                                *length = create_rtt_payload_redundancy1(strm->pt, main_payload, last1, last_offset1, payload);
+                                *length = create_rtt_payload_redundancy1(strm->pt, main_payload, last1, ts_offset1, payload);
                                 if (has_main_payload != 0) {
                                         strm->rtt_redundants[strm->num_rtt_redundants++] = *rtt_send_data;
                                 } else {
@@ -421,7 +421,7 @@ void stream_create_rtt_payload(struct pjmedia_rtt_stream *strm, char * payload, 
                                 ts_offset1 = strm->rtt_redundants[1].ts_offset;
                                 last2 = &strm->rtt_redundants[0].payload;
                                 ts_offset2 = strm->rtt_redundants[0].ts_offset;
-                                *length = create_rtt_payload_redundancy2(pt, main_payload, &last1, &last2, ts_offset1,ts_offset2, payload);
+                                *length = create_rtt_payload_redundancy2(strm->pt, main_payload, &last1, &last2, ts_offset1,ts_offset2, payload);
                                 strm->rtt_redundants[0] = strm->rtt_redundants[1];
                                 if (has_main_payload != 0) {
                                         strm->rtt_redundants[1] = *rtt_send_data;
