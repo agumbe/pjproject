@@ -266,7 +266,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_send_text(pjmedia_rtt_stream* text_stre
                 text_stream->start_ts = ts_now;
                 ts_offset = 0;
         } else {
-                ts_offset = pj_timestamp_diff32(ts_now, &text_stream->start_ts);
+                ts_offset = pj_timestamp_diff32(&ts_now, &text_stream->start_ts);
         }
         rtt_send_data.ts_offset = ts_offset;
         status = pj_mutex_lock(text_stream->lock);
@@ -274,7 +274,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_send_text(pjmedia_rtt_stream* text_stre
                 return -1;
         }
         pj_strdup(text_stream->pool, &rtt_send_data.payload, &payload);
-        text_stream->payloads[text_stream->num_send_data++] = rtt_send_data;
+        text_stream->rtt_send_data[text_stream->num_send_data++] = rtt_send_data;
         pj_mutex_unlock(text_stream->lock);
         return 0;
 }
@@ -381,7 +381,7 @@ void parse_rtt_payload_redundancy(pj_pool_t * pool, char * payload, int payload_
 void stream_create_rtt_payload(struct pjmedia_rtt_stream *strm, char * payload, pj_ssize_t * length) {
         unsigned status;
         *length = 0;
-        pj_str_t  empty;
+        pj_str_t  empty_str;
         pj_str_t  main_payload;
         int       has_main_payload;
         pj_str_t  last1;
@@ -389,15 +389,16 @@ void stream_create_rtt_payload(struct pjmedia_rtt_stream *strm, char * payload, 
         unsigned  ts_offset1;
         unsigned  ts_offset2;
         pjmedia_rtt_send_data rtt_send_data;
-        empty.ptr = NULL;
-        empty.slen = 0;
+
+        empty_str.ptr = NULL;
+        empty_str.slen = 0;
 
         if ((strm->num_send_data > 0) || (strm->num_rtt_redundants > 0)) {
                 status = pj_mutex_lock(strm->lock);
                 if (status == PJ_SUCCESS) {
                         if (strm->num_send_data > 0) {
                                 has_main_payload = 1;
-                                rtt_send_data = strm->payloads[strm->num_send_data--];
+                                rtt_send_data = strm->rtt_send_data[strm->num_send_data--];
                                 main_payload = rtt_send_data->payload;
                         } else {
                                 has_main_payload = 0;
