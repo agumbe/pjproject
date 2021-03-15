@@ -134,11 +134,12 @@ static void boost_priority(void)
  */
 
 PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
+        unsigned                pt,
         pjmedia_endpt * 	endpt,
         pjmedia_sdp_session *local_sdp,
         pjmedia_sdp_session *remote_sdp,
         unsigned             sdp_index,
-        void (* 	on_rx_rtt )(void * obj, void *rtt_text, unsigned length, unsigned  ts),
+        void (* 	on_rx_rtt )(void * obj, pj_str_t rtt_text),
         void *                  cb_obj,
         pjmedia_transport       *transport)
 {
@@ -147,6 +148,7 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
         rtt_stream = PJ_POOL_ZALLOC_T(pool, pjmedia_rtt_stream);
 
         if (rtt_stream != NULL) {
+                rtt_stream->pt = pt;
                 rtt_stream->local_sdp = local_sdp;
                 rtt_stream->remote_sdp = remote_sdp;
                 rtt_stream->transport = transport;
@@ -253,14 +255,26 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_send_text(pjmedia_rtt_stream* text_stre
 {
         pj_status_t     status;
         pj_str_t        dup_payload;
+        unsigned        ts_offset;
+        pj_timestamp    ts_now;
+        pjmedia_rtt_send_data   rtt_send_data;
+
         if (text_stream == NULL)
                 return -1;
+        pj_get_timestamp(&ts_now);
+        if (text_stream->start_ts.lo == 0) {
+                text_stream->start_ts = ts_now;
+                ts_offset = 0;
+        } else {
+                ts_offset = pj_timestamp_diff32(ts_now, text_stream->start_ts);
+        }
+        rtt_send_data.ts_offset = ts_offset;
         status = pj_mutex_lock(text_stream->lock);
         if (status != PJ_SUCCESS) {
                 return -1;
         }
-        pj_strdup(text_stream->pool, &dup_payload, &payload);
-        text_stream->payloads[text_stream->num_payloads++] = dup_payload;
+        pj_strdup(text_stream->pool, &rtt_send_data.payload, &payload);
+        text_stream->payloads[text_stream->num_payloads++] = rtt_send_data;
         pj_mutex_unlock(text_stream->lock);
         return 0;
 }
@@ -286,6 +300,144 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_stop(pjmedia_rtt_stream* text_stream)
 }
 
 
+void create_red_header(int pt, int ts_offset, int len, char *  header) {
+        header[0] = (char)pt;
+        header[0] = header[0] | 0x80;
+        int data = ts_offset << 10;
+        data = data | len;
+        char * p_data = (char *)&data;
+        header[1] = p_data[2];
+        header[2] = p_data[1];
+        header[3] = p_data[0];
+}
+
+
+int create_rtt_payload_redundancy2(int pt, pj_str_t main, pj_str_t last1, pj_str_t last2,
+        int ts_offset1, int ts_offset2, char * payload) {
+        create_red_header(pt, ts_offset2, last2.slen, payload);
+        create_red_header(pt, ts_offset1, last1.slen, payload + 4);
+        *(payload + 8) = (char)pt;
+        int payload_len = main.slen + 9 + last1.slen + last2.slen;
+        memcpy(payload + 9, last2.ptr, last2.slen);
+        memcpy(payload + 9 + last2.slen, last1.ptr, last1.slen);
+        if (main.ptr != NULL) {
+                memcpy(payload + 9 + last2.slen + last1.slen, main.ptr, main.slen);
+        }
+        //print_hex(payload, payload_len);
+        return payload_len;
+}
+
+
+int create_rtt_payload_redundancy1(int pt, pj_str_t main, pj_str_t last1,
+                int ts_offset1, char * payload) {
+        create_red_header(pt, ts_offset1, last1.slen, payload);
+        *(payload + 4) = (char)pt;
+        int payload_len = main.slen + 5 + last1.slen;
+        memcpy(payload + 5, last1.ptr, last1.slen);
+        if (main.ptr != NULL) {
+                memcpy(payload + 5 + last1.slen, main.ptr, main.slen);
+        }
+        //print_hex(payload, payload_len);
+        return payload_len;
+}
+
+
+int create_rtt_payload_redundancy0(int pt, pj_str_t main, char * payload) {
+        *(payload) = (char)pt;
+        int payload_len = main.slen + 1;
+        memcpy(payload + 1, main.ptr, main.slen);
+        //print_hex(payload, payload_len);
+        return payload_len;
+}
+
+
+// we just get the main t140 block for now
+// also assume there are 3 total t.140 blocks
+void parse_rtt_payload_redundancy(pj_pool_t * pool, char * payload, int payload_len, pj_str_t * dest) {
+        int redundant_payload_length;
+        int last1_payload_length;
+        char * t140_start;
+        char * payload_header;
+        int extra_len = 0;
+        char str_data[1024];
+        int dest_len;
+
+        payload_header = payload;
+        while((payload_header[0] & 0x80) != 0) {
+                redundant_payload_length = ((payload_header[2] & 0x3) << 8) + payload_header[3];
+                payload_header = payload_header + 4;
+                extra_len += redundant_payload_length + 4;
+        }
+        extra_len += 1;
+        t140_start = payload + extra_len;
+
+        dest_len = payload_len - extra_len;
+        memcpy(str_data, t140_start, dest_len);
+        str_data[dest_len] = '\0';
+        pj_strdup2(pool, dest, str_data)
+}
+
+
+void stream_create_rtt_payload(struct pjmedia_rtt_stream *strm, char * payload, pj_ssize_t * length) {
+        unsigned status;
+        *length = 0;
+        pj_str_t  empty;
+        pj_str_t  main;
+        int       has_main_payload;
+        pj_str_t  last1;
+        pj_str_t  last2;
+        unsigned  ts_offset1;
+        unsigned  ts_offset2;
+        pjmedia_rtt_send_data rtt_send_data;
+        empty.ptr = NULL;
+        empty.slen = 0;
+
+        if ((strm->num_payloads > 0) || (strm->num_rtt_redundants > 0)) {
+                status = pj_mutex_lock(strm->lock);
+                if (status == PJ_SUCCESS) {
+                        if (strm->num_payloads > 0) {
+                                has_main_payload = 1;
+                                rtt_send_data = strm->payloads[strm->num_payloads--];
+                                main = rtt_send_data->payload;
+                        } else {
+                                has_main_payload = 0;
+                                main = empty_str;
+                        }
+                        if (strm->num_rtt_redundants == 0) {
+                                if (has_main_payload != 0) {
+                                        *length = create_rtt_payload_redundancy0(strm->pt, main, payload);
+                                        strm->rtt_redundants[strm->num_rtt_redundants++] = rtt_send_data;
+                                }
+                        } else if (strm->num_rtt_redundants == 1) {
+                                last1 = strm->rtt_redundants[0].payload;
+                                ts_offset1 = strm->rtt_redundants[0].ts_offset;
+                                *length = create_rtt_payload_redundancy1(strm->pt, main, last1, last_offset1, payload);
+                                if (has_main_payload != 0) {
+                                        strm->rtt_redundants[strm->num_rtt_redundants++] = rtt_send_data;
+                                } else {
+                                        strm->num_rtt_redundants = 0;
+                                }
+                        } else if (strm->num_rtt_redundants == 2) {
+                                last1 = strm->rtt_redundants[1].payload;
+                                ts_offset1 = strm->rtt_redundants[1].ts_offset;
+                                last2 = strm->rtt_redundants[0].payload;
+                                ts_offset2 = strm->rtt_redundants[0].ts_offset;
+                                *length = create_rtt_payload_redundancy2(pt, main, last1, last2, ts_offset1,ts_offset2, payload);
+                                strm->rtt_redundants[0] = strm->rtt_redundants[1];
+                                if (has_main_payload != 0) {
+                                        strm->rtt_redundants[1] = rtt_send_data;
+                                } else {
+                                        strm->num_rtt_redundants = 1;
+                                }
+                        }
+                        pj_mutex_unlock(strm->lock);
+                        //if (status != PJ_SUCCESS)
+                        //        app_perror(THIS_FILE, "Error sending RTP packet", status);
+                }
+        }
+}
+
+
 /*
  * This callback is called by media transport on receipt of RTP packet.
  */
@@ -296,6 +448,7 @@ static void on_rx_rtp(void *user_data, void *pkt, pj_ssize_t size)
         const pjmedia_rtp_hdr *hdr;
         const void *payload;
         unsigned payload_len;
+        pj_str_t        rtt_data;
 
         strm = user_data;
 
@@ -328,9 +481,11 @@ static void on_rx_rtp(void *user_data, void *pkt, pj_ssize_t size)
         pjmedia_rtp_session_update(&strm->in_sess, hdr, NULL);
 
         if (strm->on_rx_rtt != NULL) {
-                strm->on_rx_rtt(strm->cb_obj, payload, payload_len, pj_ntohl(hdr->ts));
+                parse_rtt_payload_redundancy(strm->pool, payload, payload_len, &rtt_data);
+                strm->on_rx_rtt(strm->cb_obj, rtt_data);
         }
 }
+
 
 /*
  * This callback is called by media transport on receipt of RTCP packet.
@@ -454,21 +609,13 @@ static int media_thread(void *arg)
                                         /* Zero the payload */
                                         pj_bzero(packet+hdrlen, strm->bytes_per_frame);
 
-                                        status = pj_mutex_lock(strm->lock);
-                                        if (status == PJ_SUCCESS) {
-                                                pj_str_t  payload = strm->payloads[strm->num_payloads--];
-                                                pj_memcpy(packet+hdrlen, payload.ptr, payload.slen);
+                                        stream_create_rtt_payload(strm, packet++hdrlen, &size);
 
-                                                pj_mutex_unlock(strm->lock);
+                                        /* Send RTP packet */
+                                        size = hdrlen + size;
+                                        status = pjmedia_transport_send_rtp(strm->transport,
+                                                                    packet, size);
 
-                                                /* Send RTP packet */
-                                                size = hdrlen + strm->bytes_per_frame;
-                                                status = pjmedia_transport_send_rtp(strm->transport,
-                                                                            packet, size);
-                                                //if (status != PJ_SUCCESS)
-                                                //        app_perror(THIS_FILE, "Error sending RTP packet", status);
-
-                                        }
                                 } else {
                                         strm->marker = 1;
                                 }

@@ -48,6 +48,11 @@
 
 PJ_BEGIN_DECL
 
+struct pjmedia_rtt_send_data {
+        unsigned        ts_offset;
+        pj_str_t        payload;
+}
+
 /**
  * Generic representation of attribute.
  */
@@ -76,8 +81,15 @@ struct pjmedia_rtt_stream
         unsigned		 samples_per_frame; /* samples per frame	*/
         unsigned		 bytes_per_frame;   /* frame size.		*/
 
-        pj_str_t               payloads[20];
-        unsigned               num_payloads;
+        //pj_str_t               payloads[20];
+        pjmedia_rtt_send_data  rtt_send_data[20];
+        pjmedia_rtt_send_data  rtt_redundants[2];
+        unsigned               num_rtt_redundants;
+        unsigned               num_send_data;
+
+        unsigned               pt;      /* payload type */
+
+        pj_timestamp           start_ts;
 
         unsigned                marker;
         pj_mutex_t *            lock;
@@ -89,7 +101,7 @@ struct pjmedia_rtt_stream
         /* RTCP stats: */
         pjmedia_rtcp_session    rtcp;		    /* incoming RTCP session.	*/
 
-        void (* 	on_rx_rtt )(void * obj, const void *rtt_text, unsigned length, unsigned ts);
+        void (* 	on_rx_rtt )(void * obj, pj_str_t rtt_text);
         void *                  cb_obj;
         /* Thread: */
         pj_bool_t		 thread_quit_flag;  /* Stop media thread.	*/
@@ -111,11 +123,12 @@ typedef struct pjmedia_rtt_stream pjmedia_rtt_stream;
  * @return		The new SDP attribute.
  */
 PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
+        unsigned            pt;
         pjmedia_endpt * 	endpt,
         pjmedia_sdp_session *   local_sdp,
         pjmedia_sdp_session *   remote_sdp,
         unsigned             sdp_index,
-        void (* 	on_rx_rtt )(void * obj, void *rtt_text, unsigned length, unsigned ts),
+        void (* 	on_rx_rtt )(void * obj, pj_str_t rtt_text),
         void *                  cb_obj,
         pjmedia_transport       *transport);
 
@@ -139,7 +152,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream);
  *
  * @return		status.
  */
-PJ_DECL(pj_status_t) pjmedia_text_stream_send_text(pjmedia_rtt_stream* text_stream, pj_str_t payload);
+PJ_DECL(pj_status_t) pjmedia_text_stream_send_text(pjmedia_rtt_stream* text_stream, pj_str_t rtt_text);
 
 /**
  * stop text media stream.
