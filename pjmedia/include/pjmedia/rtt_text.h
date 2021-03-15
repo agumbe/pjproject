@@ -124,7 +124,7 @@ typedef struct pjmedia_rtt_stream pjmedia_rtt_stream;
  * @return		The new SDP attribute.
  */
 PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
-        unsigned            pt;
+        unsigned            pt,
         pjmedia_endpt * 	endpt,
         pjmedia_sdp_session *   local_sdp,
         pjmedia_sdp_session *   remote_sdp,
