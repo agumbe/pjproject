@@ -226,14 +226,14 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
 
         /* Start media thread. */
         text_stream->thread_quit_flag = 0;
-#if PJ_HAS_THREADS
+//#if PJ_HAS_THREADS
         status = pj_thread_create( text_stream->pool, "media", &media_thread, text_stream,
                                0, 0, &text_stream->thread);
         if (status != PJ_SUCCESS) {
                 //app_perror(THIS_FILE, "Error creating media thread", status);
                 return status;
         }
-#endif
+//#endif
 
         /* Set the media as active */
         text_stream->active = PJ_TRUE;
