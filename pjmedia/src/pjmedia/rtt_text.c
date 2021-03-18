@@ -182,7 +182,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
 {
         pj_status_t status;
 
-        PJ_LOG(3, THIS_FILE, "inside pjmedia_text_stream_start");
+        PJ_LOG(3, (THIS_FILE, "inside pjmedia_text_stream_start"));
         /* If this is a mid-call media update, then destroy existing media */
         if (text_stream->thread != NULL)
                 destroy_call_media(text_stream);
