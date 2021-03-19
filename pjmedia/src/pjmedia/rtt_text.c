@@ -182,7 +182,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
 {
         pj_status_t status;
 
-        PJ_LOG(1, (THIS_FILE, "inside pjmedia_text_stream_start 1 \n"));
+        PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start 1 \n"));
         /* If this is a mid-call media update, then destroy existing media */
         if (text_stream->thread != NULL)
                 destroy_call_media(text_stream);
@@ -190,6 +190,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
         status = pjmedia_stream_info_from_sdp(&text_stream->si, text_stream->pool, text_stream->endpt,
                                   text_stream->local_sdp, text_stream->remote_sdp, 0);
         if (status != PJ_SUCCESS) {
+                PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start pjmedia_stream_info_from_sdp failed \n"));
                 //app_perror(THIS_FILE, "Error creating stream info from SDP", status);
                 return status;
         }
@@ -217,6 +218,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
                                       &on_rx_rtp,
                                       &on_rx_rtcp);
         if (status != PJ_SUCCESS) {
+                PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start pjmedia_transport_attach failed \n"));
                 //app_perror(THIS_FILE, "Error on pjmedia_transport_attach()", status);
                 return status;
         }
@@ -231,11 +233,13 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
         status = pj_thread_create( text_stream->pool, "media", &media_thread, text_stream,
                                0, 0, &text_stream->thread);
         if (status != PJ_SUCCESS) {
+                PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start pj_thread_create failed \n"));
                 //app_perror(THIS_FILE, "Error creating media thread", status);
                 return status;
         }
 //#endif
 
+        PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start pj_thread_create done, all good \n"));
         /* Set the media as active */
         text_stream->active = PJ_TRUE;
 
@@ -259,8 +263,11 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_send_text(pjmedia_rtt_stream* text_stre
         pj_timestamp    ts_now;
         pjmedia_rtt_send_data   rtt_send_data;
 
-        if (text_stream == NULL)
+        PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_send_text \n"));
+        if (text_stream == NULL) {
+                PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_send_text text_stream == NULL\n"));
                 return -1;
+        }
         pj_get_timestamp(&ts_now);
         if (text_stream->start_ts.u32.lo == 0) {
                 text_stream->start_ts = ts_now;
@@ -271,11 +278,13 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_send_text(pjmedia_rtt_stream* text_stre
         rtt_send_data.ts_offset = ts_offset;
         status = pj_mutex_lock(text_stream->lock);
         if (status != PJ_SUCCESS) {
+                PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_send_text pj_mutex_lock failed\n"));
                 return -1;
         }
         pj_strdup(text_stream->pool, &rtt_send_data.payload, &payload);
         text_stream->rtt_send_data[text_stream->num_send_data++] = rtt_send_data;
         pj_mutex_unlock(text_stream->lock);
+        PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_send_text all done\n"));
         return 0;
 }
 
@@ -524,6 +533,7 @@ static int media_thread(void *arg)
         unsigned msec_interval;
         pj_timestamp freq, next_rtp, next_rtcp;
 
+        PJ_LOG(1, (THIS_FILE, "\ninside media_thread\n"));
         /* Boost thread priority if necessary */
         /* tenp commented */
         //boost_priority();
@@ -655,6 +665,7 @@ static int media_thread(void *arg)
                                       1000);
                 }
         }
+        PJ_LOG(1, (THIS_FILE, "\ninside media_thread done\n"));
 
         return 0;
 }
