@@ -155,14 +155,14 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
                 length = pjmedia_sdp_print(local_sdp, buf, sizeof(buf));
                 if (length > 0) {
                     PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create local_sdp success\n"));
-                    PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create local_sdp %s\n", buf));
+                    PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create local_sdp %.*s\n", length, buf));
                 } else {
                     PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create local_sdp failed %d\n", status));
                 }
                 length = pjmedia_sdp_print(remote_sdp, buf, sizeof(buf));
                 if (length > 0) {
                     PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create remote_sdp success\n"));
-                    PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create remote_sdp %s\n", buf));
+                    PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create remote_sdp %.*s\n", length, buf));
                 } else {
                     PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create remote_sdp failed %d\n", status));
                 }
