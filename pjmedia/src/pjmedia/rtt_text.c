@@ -159,7 +159,7 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
 
         PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create sdp_index %d\n", sdp_index));
         if (rtt_stream != NULL) {
-
+                /*
                 length2 = pjmedia_sdp_print(remote_sdp, buf2, sizeof(buf2));
                 if (length2 > 0) {
                     PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create remote_sdp success\n"));
@@ -175,6 +175,7 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
                 } else {
                     PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create local_sdp failed %d\n", length1));
                 }
+                */
                 rtt_stream->pt = pt;
                 rtt_stream->local_sdp = local_sdp;
                 rtt_stream->remote_sdp = remote_sdp;
