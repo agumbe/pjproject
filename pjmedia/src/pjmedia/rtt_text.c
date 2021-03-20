@@ -212,13 +212,15 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
                 destroy_call_media(text_stream);
         }
 
+        /*
         status = pjmedia_stream_info_from_sdp(&text_stream->si, text_stream->pool, text_stream->endpt,
                                   text_stream->local_sdp, text_stream->remote_sdp, text_stream->sdp_index);
         if (status != PJ_SUCCESS) {
-                PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start pjmedia_stream_info_from_sdp failed \n"));
+                PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start pjmedia_stream_info_from_sdp failed %d \n", status));
                 //app_perror(THIS_FILE, "Error creating stream info from SDP", status);
                 return status;
         }
+        */
 
         /* Capture stream definition from the SDP */
         /*
@@ -229,11 +231,20 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
         text_stream->samples_per_frame = 1;
         text_stream->bytes_per_frame = 1;
         text_stream->clock_rate = 1000;
-
+        /*
         pjmedia_rtp_session_init(&text_stream->out_sess, text_stream->si.tx_pt,
                              pj_rand());
         pjmedia_rtp_session_init(&text_stream->in_sess, text_stream->si.fmt.pt, 0);
-        pjmedia_rtcp_init(&text_stream->rtcp, "rtcp", 1000, 1, 0);
+        */
+        status = pjmedia_rtp_session_init(&text_stream->out_sess, text_stream->pt,
+                             pj_rand());
+        PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start pjmedia_rtp_session_init failed %d\n", status));
+
+        status = pjmedia_rtp_session_init(&text_stream->in_sess, text_stream->pt, 0);
+        PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start pjmedia_rtp_session_init in sess failed %d\n", status));
+
+        status = pjmedia_rtcp_init(&text_stream->rtcp, "rtcp", 1000, 1, 0);
+        PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start pjmedia_rtcp_init failed %d\n", status));
 
         /* Attach media to transport */
         status = pjmedia_transport_attach(text_stream->transport, text_stream,
