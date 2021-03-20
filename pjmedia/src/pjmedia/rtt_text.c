@@ -243,8 +243,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
         status = pjmedia_rtp_session_init(&text_stream->in_sess, text_stream->pt, 0);
         PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start pjmedia_rtp_session_init in sess failed %d\n", status));
 
-        status = pjmedia_rtcp_init(&text_stream->rtcp, "rtcp", 1000, 1, 0);
-        PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start pjmedia_rtcp_init failed %d\n", status));
+        pjmedia_rtcp_init(&text_stream->rtcp, "rtcp", 1000, 1, 0);
 
         /* Attach media to transport */
         status = pjmedia_transport_attach(text_stream->transport, text_stream,
