@@ -43,6 +43,12 @@
 #define LOGERR_(expr)			PJ_PERROR(4,expr);
 #define TRC_(expr)			PJ_LOG(5,expr)
 
+
+static const pj_str_t ID_IN = { "IN", 2 };
+static const pj_str_t ID_IP4 = { "IP4", 3};
+static const pj_str_t ID_IP6 = { "IP6", 3};
+
+
 static void destroy_call_media(pjmedia_rtt_stream * rtt_stream);
 static void on_rx_rtp(void *user_data, void *pkt, pj_ssize_t size);
 static void on_rx_rtcp(void *user_data, void *pkt, pj_ssize_t size);
