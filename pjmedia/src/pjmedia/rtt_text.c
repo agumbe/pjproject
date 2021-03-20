@@ -244,8 +244,11 @@ static pj_status_t pjmedia_text_stream_info_from_sdp(
 	return PJMEDIA_SDP_EMISSINGCONN;
 
     /* Media type must be text */
+    /*
+    we do not set this for rtt text
     if (pjmedia_get_type(&local_m->desc.media) != PJMEDIA_TYPE_TEXT)
 	return PJMEDIA_EINVALIMEDIATYPE;
+        */
 
     /* Get codec manager. */
     //mgr = pjmedia_endpt_get_codec_mgr(endpt);
