@@ -1135,6 +1135,8 @@ PJ_DEF(pj_status_t) pjmedia_endpt_dump(pjmedia_endpt *endpt)
 	    type = "Audio"; break;
 	case PJMEDIA_TYPE_VIDEO:
 	    type = "Video"; break;
+	case PJMEDIA_TYPE_TEXT:
+	    type = "Text"; break;
 	default:
 	    type = "Unknown type"; break;
 	}

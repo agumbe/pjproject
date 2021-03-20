@@ -242,7 +242,7 @@ static pj_status_t pjmedia_text_stream_info_from_sdp(
     if (rem_conn == NULL)
 	return PJMEDIA_SDP_EMISSINGCONN;
 
-    /* Media type must be audio */
+    /* Media type must be text */
     if (pjmedia_get_type(&local_m->desc.media) != PJMEDIA_TYPE_TEXT)
 	return PJMEDIA_EINVALIMEDIATYPE;
 
