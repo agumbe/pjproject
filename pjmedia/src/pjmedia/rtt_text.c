@@ -184,8 +184,10 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
 
         PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start 1 \n"));
         /* If this is a mid-call media update, then destroy existing media */
-        if (text_stream->thread != NULL)
+        if (text_stream->thread != NULL) {
+                PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start destroy_call_media \n"));
                 destroy_call_media(text_stream);
+        }
 
         status = pjmedia_stream_info_from_sdp(&text_stream->si, text_stream->pool, text_stream->endpt,
                                   text_stream->local_sdp, text_stream->remote_sdp, 0);
@@ -674,6 +676,7 @@ static int media_thread(void *arg)
 /* Destroy call's media */
 static void destroy_call_media(pjmedia_rtt_stream * rtt_stream)
 {
+        PJ_LOG(1, (THIS_FILE, "\ninside destroy_call_media\n"));
     if (rtt_stream) {
 	rtt_stream->active = PJ_FALSE;
 
