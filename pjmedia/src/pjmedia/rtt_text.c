@@ -286,7 +286,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_send_text(pjmedia_rtt_stream* text_stre
         pj_strdup(text_stream->pool, &rtt_send_data.payload, &payload);
         text_stream->rtt_send_data[text_stream->num_send_data++] = rtt_send_data;
         pj_mutex_unlock(text_stream->lock);
-        PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_send_text all done\n"));
+        PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_send_text all done, num send data %d\n", text_stream->num_send_data));
         return 0;
 }
 
@@ -613,7 +613,8 @@ static int media_thread(void *arg)
                                 if (status == PJ_SUCCESS) {
                                         hdr = (const pjmedia_rtp_hdr*) p_hdr;
 
-                                        PJ_LOG(1,(THIS_FILE, "\nmedia_thread \t\tTx seq=%d\n", pj_ntohs(hdr->seq)));
+                                        PJ_LOG(1,(THIS_FILE, "\nmedia_thread \t\tTx seq=%d, pt %d\n",
+                                                        pj_ntohs(hdr->seq), strm->si.tx_pt));
 
                                         /* Copy RTP header to packet */
                                         pj_memcpy(packet, hdr, hdrlen);
