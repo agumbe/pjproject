@@ -158,7 +158,7 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
                 if (length2 > 0) {
                     PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create remote_sdp success\n"));
                     PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create remote_sdp success length %d\n", length2));
-                    PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create remote_sdp %.*s\n", length2, buf2));
+                    //PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create remote_sdp %.*s\n", length2, buf2));
                 } else {
                     PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create remote_sdp failed %d\n", status));
                 }
