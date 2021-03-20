@@ -611,10 +611,9 @@ static int media_thread(void *arg)
                                                              &p_hdr, &hdrlen);
                                 strm->marker = 0;
                                 if (status == PJ_SUCCESS) {
+                                        hdr = (const pjmedia_rtp_hdr*) p_hdr;
 
                                         PJ_LOG(1,(THIS_FILE, "\nmedia_thread \t\tTx seq=%d\n", pj_ntohs(hdr->seq)));
-
-                                        hdr = (const pjmedia_rtp_hdr*) p_hdr;
 
                                         /* Copy RTP header to packet */
                                         pj_memcpy(packet, hdr, hdrlen);
