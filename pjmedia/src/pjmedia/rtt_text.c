@@ -143,11 +143,27 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
         void *                  cb_obj,
         pjmedia_transport       *transport)
 {
+        char buf[2056];
         pj_status_t status;
         pjmedia_rtt_stream* rtt_stream;
         rtt_stream = PJ_POOL_ZALLOC_T(pool, pjmedia_rtt_stream);
 
         if (rtt_stream != NULL) {
+
+                status = pjmedia_sdp_print(local_sdp, buf, sizeof(buf));
+                if (status == PJ_SUCCESS) {
+                    PJ_LOG(1, (THIS_FILE, "pjmedia_text_stream_create local_sdp success"));
+                    PJ_LOG(1, (THIS_FILE, "pjmedia_text_stream_create local_sdp %s", buf));
+                } else {
+                    PJ_LOG(1, (THIS_FILE, "pjmedia_text_stream_create local_sdp failed"));
+                }
+                status = pjmedia_sdp_print(remote_sdp, buf, sizeof(buf));
+                if (status == PJ_SUCCESS) {
+                    PJ_LOG(1, (THIS_FILE, "pjmedia_text_stream_create remote_sdp success"));
+                    PJ_LOG(1, (THIS_FILE, "pjmedia_text_stream_create remote_sdp %s", buf));
+                } else {
+                    PJ_LOG(1, (THIS_FILE, "pjmedia_text_stream_create remote_sdp failed"));
+                }
                 rtt_stream->pt = pt;
                 rtt_stream->local_sdp = local_sdp;
                 rtt_stream->remote_sdp = remote_sdp;
