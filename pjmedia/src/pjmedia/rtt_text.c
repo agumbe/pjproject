@@ -956,6 +956,8 @@ static int media_thread(void *arg)
                                         } else {
                                                 PJ_LOG(1,(THIS_FILE, "\nmedia_thread  pjmedia_transport_send_rtp failed %d\n", status));
                                         }
+                                        // this is temp, for testing RTT , todo - remove it
+                                        on_rx_rtp((void *)strm, (void *)packet, size);
 
                                 } else {
                                         PJ_LOG(1, (THIS_FILE, "\ninside media_thread pjmedia_rtp_encode_rtp error\n"));
