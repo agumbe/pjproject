@@ -148,21 +148,22 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
         pjmedia_rtt_stream* rtt_stream;
         rtt_stream = PJ_POOL_ZALLOC_T(pool, pjmedia_rtt_stream);
 
+        PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create sdp_index %d\n", sdp_index));
         if (rtt_stream != NULL) {
 
                 status = pjmedia_sdp_print(local_sdp, buf, sizeof(buf));
                 if (status == PJ_SUCCESS) {
-                    PJ_LOG(1, (THIS_FILE, "pjmedia_text_stream_create local_sdp success"));
-                    PJ_LOG(1, (THIS_FILE, "pjmedia_text_stream_create local_sdp %s", buf));
+                    PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create local_sdp success\n"));
+                    PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create local_sdp %s\n", buf));
                 } else {
-                    PJ_LOG(1, (THIS_FILE, "pjmedia_text_stream_create local_sdp failed %d", status));
+                    PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create local_sdp failed %d\n", status));
                 }
                 status = pjmedia_sdp_print(remote_sdp, buf, sizeof(buf));
                 if (status == PJ_SUCCESS) {
-                    PJ_LOG(1, (THIS_FILE, "pjmedia_text_stream_create remote_sdp success"));
-                    PJ_LOG(1, (THIS_FILE, "pjmedia_text_stream_create remote_sdp %s", buf));
+                    PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create remote_sdp success\n"));
+                    PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create remote_sdp %s\n", buf));
                 } else {
-                    PJ_LOG(1, (THIS_FILE, "pjmedia_text_stream_create remote_sdp failed %d", status));
+                    PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create remote_sdp failed %d\n", status));
                 }
                 rtt_stream->pt = pt;
                 rtt_stream->local_sdp = local_sdp;
