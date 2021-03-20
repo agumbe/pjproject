@@ -181,11 +181,13 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
 
                 status = pj_mutex_create_simple(pool, "rtt_text", &rtt_stream->lock);
                 if (status != PJ_SUCCESS) {
+                    PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create pj_mutex_create_simple failed %d\n", status));
                         //app_perror(THIS_FILE, "acquiring mutex failed", status);
                         return NULL;
                 }
         }
 
+        PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create all done"));
         return rtt_stream;
 }
 
