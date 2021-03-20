@@ -602,6 +602,7 @@ static int media_thread(void *arg)
                                 pj_ssize_t size;
                                 int hdrlen;
 
+                                PJ_LOG(1, (THIS_FILE, "\ninside media_thread found rtt text to send\n"));
                                 /* Format RTP header */
                                 status = pjmedia_rtp_encode_rtp( &strm->out_sess, strm->si.tx_pt,
                                                              strm->marker, /* marker bit */
@@ -611,7 +612,7 @@ static int media_thread(void *arg)
                                 strm->marker = 0;
                                 if (status == PJ_SUCCESS) {
 
-                                        //PJ_LOG(4,(THIS_FILE, "\t\tTx seq=%d", pj_ntohs(hdr->seq)));
+                                        PJ_LOG(1,(THIS_FILE, "\nmedia_thread \t\tTx seq=%d\n", pj_ntohs(hdr->seq)));
 
                                         hdr = (const pjmedia_rtp_hdr*) p_hdr;
 
@@ -627,8 +628,14 @@ static int media_thread(void *arg)
                                         size = hdrlen + size;
                                         status = pjmedia_transport_send_rtp(strm->transport,
                                                                     packet, size);
+                                        if (status == PJ_SUCCESS) {
+                                                PJ_LOG(1,(THIS_FILE, "\nmedia_thread pjmedia_transport_send_rtp success\n", pj_ntohs(hdr->seq)));
+                                        } else {
+                                                PJ_LOG(1,(THIS_FILE, "\nmedia_thread  pjmedia_transport_send_rtp failed %d\n", status));
+                                        }
 
                                 } else {
+                                        PJ_LOG(1, (THIS_FILE, "\ninside media_thread pjmedia_rtp_encode_rtp error\n"));
                                         strm->marker = 1;
                                 }
                         } else {
