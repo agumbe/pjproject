@@ -144,6 +144,7 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
         pjmedia_transport       *transport)
 {
         char buf[2056];
+        int length;
         pj_status_t status;
         pjmedia_rtt_stream* rtt_stream;
         rtt_stream = PJ_POOL_ZALLOC_T(pool, pjmedia_rtt_stream);
@@ -151,15 +152,15 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
         PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create sdp_index %d\n", sdp_index));
         if (rtt_stream != NULL) {
 
-                status = pjmedia_sdp_print(local_sdp, buf, sizeof(buf));
-                if (status == PJ_SUCCESS) {
+                length = pjmedia_sdp_print(local_sdp, buf, sizeof(buf));
+                if (length > 0) {
                     PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create local_sdp success\n"));
                     PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create local_sdp %s\n", buf));
                 } else {
                     PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create local_sdp failed %d\n", status));
                 }
-                status = pjmedia_sdp_print(remote_sdp, buf, sizeof(buf));
-                if (status == PJ_SUCCESS) {
+                length = pjmedia_sdp_print(remote_sdp, buf, sizeof(buf));
+                if (length > 0) {
                     PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create remote_sdp success\n"));
                     PJ_LOG(1, (THIS_FILE, "\npjmedia_text_stream_create remote_sdp %s\n", buf));
                 } else {
@@ -207,7 +208,7 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
         }
 
         status = pjmedia_stream_info_from_sdp(&text_stream->si, text_stream->pool, text_stream->endpt,
-                                  text_stream->local_sdp, text_stream->remote_sdp, 0);
+                                  text_stream->local_sdp, text_stream->remote_sdp, text_stream->sdp_index);
         if (status != PJ_SUCCESS) {
                 PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start pjmedia_stream_info_from_sdp failed \n"));
                 //app_perror(THIS_FILE, "Error creating stream info from SDP", status);
