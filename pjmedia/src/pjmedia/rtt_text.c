@@ -707,6 +707,8 @@ void parse_rtt_payload_redundancy(pj_pool_t * pool, char * payload, int payload_
         dest_len = payload_len - extra_len;
         memcpy(str_data, t140_start, dest_len);
         str_data[dest_len] = '\0';
+        PJ_LOG(1, (THIS_FILE, "\ninside parse_rtt_payload_redundancy str_data %s\n", str_data));
+
         pj_strdup2(pool, dest, str_data);
 }
 
@@ -957,7 +959,11 @@ static int media_thread(void *arg)
                                                 PJ_LOG(1,(THIS_FILE, "\nmedia_thread  pjmedia_transport_send_rtp failed %d\n", status));
                                         }
                                         // this is temp, for testing RTT , todo - remove it
-                                        on_rx_rtp((void *)strm, (void *)packet, size);
+                                        if (strm->on_rx_rtt != NULL) {
+                                                parse_rtt_payload_redundancy(strm->pool, packet+hdrlen, size, &rtt_data);
+                                                strm->on_rx_rtt(strm->cb_obj, rtt_data);
+                                        }
+
 
                                 } else {
                                         PJ_LOG(1, (THIS_FILE, "\ninside media_thread pjmedia_rtp_encode_rtp error\n"));
