@@ -926,6 +926,7 @@ static int media_thread(void *arg)
                                 const pjmedia_rtp_hdr *hdr;
                                 pj_ssize_t size;
                                 int hdrlen;
+                                pj_str_t        rtt_data;
 
                                 PJ_LOG(1, (THIS_FILE, "\ninside media_thread found rtt text to send\n"));
                                 /* Format RTP header */
