@@ -723,9 +723,9 @@ int create_rtt_payload_redundancy1(int pt, pj_str_t * main_payload, pj_str_t * l
                 int ts_offset1, char * payload) {
         PJ_LOG(1, (THIS_FILE, "\ninside create_rtt_payload_redundancy1\n"));
         PJ_LOG(1, (THIS_FILE, "\ninside create_rtt_payload_redundancy1 main_payload\n"));
-        print_pj_str(main_payload);
+        print_pj_str(*main_payload);
         PJ_LOG(1, (THIS_FILE, "\ninside create_rtt_payload_redundancy1 last1\n"));
-        print_pj_str(last1);
+        print_pj_str(*last1);
         create_red_header(pt, ts_offset1, last1->slen, payload);
         *(payload + 4) = (char)pt;
         int payload_len = main_payload->slen + 5 + last1->slen;
