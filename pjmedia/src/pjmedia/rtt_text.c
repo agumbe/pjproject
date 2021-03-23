@@ -1000,7 +1000,7 @@ static int media_thread(void *arg)
                 /*
                 * Time to send RTP packet.
                 */
-                        if (strm->num_send_data > 0) {
+                        if ((strm->num_send_data > 0) || (strm->num_rtt_redundants > 0)) {
                                 pj_status_t status;
                                 const void *p_hdr;
                                 const pjmedia_rtp_hdr *hdr;
