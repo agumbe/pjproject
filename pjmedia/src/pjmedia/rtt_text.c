@@ -149,10 +149,6 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
         void *                  cb_obj,
         pjmedia_transport       *transport)
 {
-        char buf1[1024];
-        char buf2[1024];
-        int length1;
-        int length2;
         pj_status_t status;
         pjmedia_rtt_stream* rtt_stream;
         rtt_stream = PJ_POOL_ZALLOC_T(pool, pjmedia_rtt_stream);
@@ -186,6 +182,8 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
                 rtt_stream->on_rx_rtt = on_rx_rtt;
                 rtt_stream->cb_obj = cb_obj;
                 rtt_stream->marker = 1;
+                rtt_stream->num_rtt_redundants = 0;
+                rtt_stream->num_send_data = 0;
 
                 status = pj_mutex_create_simple(pool, "rtt_text", &rtt_stream->lock);
                 if (status != PJ_SUCCESS) {
@@ -529,10 +527,10 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
         */
         status = pjmedia_rtp_session_init(&text_stream->out_sess, text_stream->pt,
                              pj_rand());
-        PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start pjmedia_rtp_session_init failed %d\n", status));
+        PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start pjmedia_rtp_session_init status %d\n", status));
 
         status = pjmedia_rtp_session_init(&text_stream->in_sess, text_stream->pt, 0);
-        PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start pjmedia_rtp_session_init in sess failed %d\n", status));
+        PJ_LOG(1, (THIS_FILE, "\ninside pjmedia_text_stream_start pjmedia_rtp_session_init in sess status %d\n", status));
 
         pjmedia_rtcp_init(&text_stream->rtcp, "rtcp", 1000, 1, 0);
 
