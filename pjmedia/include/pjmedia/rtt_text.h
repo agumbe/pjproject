@@ -144,6 +144,17 @@ PJ_DECL(pjmedia_rtt_stream*) pjmedia_text_stream_create(pj_pool_t *pool,
 PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream);
 
 /**
+ * send text media control char. 'S' for start of stream, 'B' for backspace, 'N' for new line
+ *
+ * @param pool		Pool to create the attribute.
+ * @param name		Attribute name.
+ * @param value		Optional attribute value.
+ *
+ * @return		status.
+ */
+PJ_DECL(pj_status_t) pjmedia_text_stream_send_control(pjmedia_rtt_stream* text_stream, pj_str_t control);
+
+/**
  * send text media stream.
  *
  * @param pool		Pool to create the attribute.
