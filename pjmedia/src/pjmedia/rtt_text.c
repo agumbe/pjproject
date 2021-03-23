@@ -799,7 +799,8 @@ void stream_create_rtt_payload(struct pjmedia_rtt_stream *strm, char * payload, 
                 if (status == PJ_SUCCESS) {
                         if (strm->num_send_data > 0) {
                                 has_main_payload = 1;
-                                p_rtt_send_data = &strm->rtt_send_data[strm->num_send_data--];
+                                p_rtt_send_data = &strm->rtt_send_data[0];
+                                strm->num_send_data--;
                                 main_payload = &p_rtt_send_data->payload;
                         } else {
                                 has_main_payload = 0;
