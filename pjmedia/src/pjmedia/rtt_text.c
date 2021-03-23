@@ -838,7 +838,7 @@ void stream_create_rtt_payload(struct pjmedia_rtt_stream *strm, char * payload, 
                                         strm->num_rtt_redundants = 1;
                                 }
                         }
-                        for (iter=0; iter < strm->num_send_data; i++) {
+                        for (iter=0; iter < strm->num_send_data; iter++) {
                             strm->rtt_send_data[iter] = strm->rtt_send_data[iter+1];
                         }
 
