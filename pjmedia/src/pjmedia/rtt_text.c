@@ -783,12 +783,17 @@ void stream_create_rtt_payload(struct pjmedia_rtt_stream *strm, char * payload, 
         unsigned  ts_offset1;
         unsigned  ts_offset2;
         pjmedia_rtt_send_data * p_rtt_send_data;
+        int iter = 0;
 
         empty_str.ptr = NULL;
         empty_str.slen = 0;
 
         PJ_LOG(1, (THIS_FILE, "\ninside stream_create_rtt_payload num_send %d, num_reds %d\n", strm->num_send_data,
                                 strm->num_rtt_redundants));
+        for (iter=0; iter < strm->num_send_data; iter++) {
+                PJ_LOG(1, (THIS_FILE, "\ninside stream_create_rtt_payload iter %d\n", iter));
+                print_pj_str(strm->rtt_send_data[iter].payload);
+        }
         if ((strm->num_send_data > 0) || (strm->num_rtt_redundants > 0)) {
                 status = pj_mutex_lock(strm->lock);
                 if (status == PJ_SUCCESS) {
