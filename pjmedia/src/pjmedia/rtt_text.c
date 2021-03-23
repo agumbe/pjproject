@@ -573,23 +573,18 @@ PJ_DECL(pj_status_t) pjmedia_text_stream_start(pjmedia_rtt_stream* text_stream)
 }
 
 
-static void print_pj_str(pj_str_t str_data) {
+static void print_hex(char * ptr, int slen) {
        int i;
-       PJ_LOG(1, (THIS_FILE, "\nprint_pj_str\n"));
-       for (i = 0; i < str_data.slen; i++) {
-               PJ_LOG(1, (THIS_FILE, "0x%02hhx", *(str_data.ptr + i)));
+       char buf[1024];
+       for (i = 0; i < slen; i++) {
+            sprintf(buf+i*5, "0x%02hhx ", *(ptr + i));
        }
-       PJ_LOG(1, (THIS_FILE, "\n"));
+       PJ_LOG(1, (THIS_FILE, "\nprint_hex %s\n", buf));
 }
 
 
-static void print_hex(char * ptr, int slen) {
-       int i;
-       PJ_LOG(1, (THIS_FILE, "\nprint_hex\n"));
-       for (i = 0; i < slen; i++) {
-               PJ_LOG(1, (THIS_FILE, "0x%02hhx", *(ptr + i)));
-       }
-       PJ_LOG(1, (THIS_FILE, "\n"));
+static void print_pj_str(pj_str_t str_data) {
+    print_hex(str_data.ptr, str_data.slen);
 }
 
 
